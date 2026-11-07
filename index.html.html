@@ -1,0 +1,2327 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sahabat Pikiran - Digital Thought Record SMP</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f4ff',
+                            100: '#e0e9fe',
+                            200: '#bae6fd',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        },
+                        pastel: {
+                            mint: '#e6f4ea',
+                            mintDark: '#2e7d32',
+                            sky: '#e0f2fe',
+                            skyDark: '#0369a1',
+                            peach: '#fff3e0',
+                            peachDark: '#e65100',
+                            lavender: '#f3e8ff',
+                            lavenderDark: '#6b21a8',
+                            rose: '#ffe4e6',
+                            roseDark: '#9f1239'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Nunito', 'Segoe UI', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts Nunito -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for Progress Graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+            user-select: none;
+        }
+        .soft-shadow {
+            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.08), 0 8px 10px -6px rgba(99, 102, 241, 0.04);
+        }
+        .pulse-mic {
+            animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        @keyframes float-gentle {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(2deg); }
+        }
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 0.85; transform: scale(1.1); }
+        }
+        @keyframes sparkle-twinkle {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.85; }
+            50% { transform: scale(1.2) rotate(15deg); opacity: 1; }
+        }
+        .animate-float {
+            animation: float-gentle 4s ease-in-out infinite;
+        }
+        .animate-glow {
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+        .animate-sparkle {
+            animation: sparkle-twinkle 2.5s ease-in-out infinite;
+        }
+        .custom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #6366f1;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col pb-12">
+
+    <!-- TOP HEADER -->
+    <header class="bg-white border-b border-indigo-50 sticky top-0 z-30 soft-shadow">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center space-x-3">
+                <div class="w-11 h-11 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-xl shadow-inner">
+                    <i class="fa-solid fa-brain"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg md:text-xl font-extrabold text-slate-800 leading-tight">Sahabat Pikiran</h1>
+                    <p class="text-xs text-slate-500 font-semibold">Digital Thought Record • SMP Negeri 1 Kotaanyar</p>
+                    <p class="text-[11px] text-indigo-600 font-bold flex items-center gap-1">
+                        <i class="fa-solid fa-user-pen text-[10px]"></i> Pengembang: Nur Kistin Kamalia
+                    </p>
+                </div>
+            </div>
+
+            <!-- Profile & Global Audio Controls -->
+            <div class="flex items-center space-x-2 md:space-x-4">
+                <!-- Cloud Status Indicator Badge -->
+                <div id="cloudStatusBadge" class="hidden sm:flex items-center bg-emerald-50 px-2.5 py-1.5 rounded-xl text-xs font-bold text-emerald-700 border border-emerald-200">
+                    <i class="fa-solid fa-cloud-arrow-up mr-1.5 text-emerald-600 animate-pulse"></i>
+                    <span id="cloudStatusText">Awan Aktif</span>
+                </div>
+
+                <!-- Select Student -->
+                <div class="flex items-center bg-indigo-50 px-3 py-1.5 rounded-xl text-xs font-bold text-indigo-700">
+                    <i class="fa-solid fa-user-graduate mr-2 text-indigo-500"></i>
+                    <select id="studentSelect" onchange="changeStudentProfile()" class="bg-transparent border-none focus:outline-none font-extrabold cursor-pointer">
+                        <option value="S1">Siswa S1</option>
+                        <option value="S2">Siswa S2</option>
+                        <option value="S3">Siswa S3</option>
+                        <option value="S4">Siswa S4</option>
+                        <option value="S5">Siswa S5</option>
+                    </select>
+                </div>
+
+                <!-- Global TTS Speed Button -->
+                <button onclick="toggleAudioSpeed()" id="speedBtn" title="Kecepatan Suara" class="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-xs font-bold flex items-center gap-1 transition">
+                    <i class="fa-solid fa-gauge-high"></i>
+                    <span id="speedLabel">1.0x</span>
+                </button>
+
+                <!-- Help Modal Button -->
+                <button onclick="openHelpModal()" class="p-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-xl text-xs font-bold flex items-center gap-1 transition">
+                    <i class="fa-solid fa-circle-question text-base"></i>
+                    <span class="hidden sm:inline">Panduan</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- SESSION NAVIGATION BAR -->
+    <nav class="bg-indigo-950 text-white shadow-md">
+        <div class="max-w-6xl mx-auto px-2 sm:px-4 flex overflow-x-auto py-2 space-x-1 sm:space-x-2 scrollbar-none">
+            <button onclick="switchSession('welcome')" id="nav-sesi-welcome" class="nav-tab px-3 py-2 rounded-xl text-xs md:text-sm font-bold whitespace-nowrap flex items-center gap-1.5 bg-indigo-600 text-white transition">
+                <i class="fa-solid fa-house text-xs"></i> Beranda
+            </button>
+            <button onclick="switchSession(1)" id="nav-sesi-1" class="nav-tab px-3 py-2 rounded-xl text-xs md:text-sm font-bold whitespace-nowrap flex items-center gap-1.5 transition">
+                <span class="w-5 h-5 rounded-full bg-indigo-700 flex items-center justify-center text-[10px]">1</span> Mengenal Alur
+            </button>
+            <button onclick="switchSession(2)" id="nav-sesi-2" class="nav-tab px-3 py-2 rounded-xl text-xs md:text-sm font-bold whitespace-nowrap flex items-center gap-1.5 transition">
+                <span class="w-5 h-5 rounded-full bg-indigo-700 flex items-center justify-center text-[10px]">2</span> Tangkap Pikiran
+            </button>
+            <button onclick="switchSession(3)" id="nav-sesi-3" class="nav-tab px-3 py-2 rounded-xl text-xs md:text-sm font-bold whitespace-nowrap flex items-center gap-1.5 transition">
+                <span class="w-5 h-5 rounded-full bg-indigo-700 flex items-center justify-center text-[10px]">3</span> Monster Pikiran
+            </button>
+            <button onclick="switchSession(4)" id="nav-sesi-4" class="nav-tab px-3 py-2 rounded-xl text-xs md:text-sm font-bold whitespace-nowrap flex items-center gap-1.5 transition">
+                <span class="w-5 h-5 rounded-full bg-indigo-700 flex items-center justify-center text-[10px]">4</span> Detektif Bukti
+            </button>
+            <button onclick="switchSession(5)" id="nav-sesi-5" class="nav-tab px-3 py-2 rounded-xl text-xs md:text-sm font-bold whitespace-nowrap flex items-center gap-1.5 transition">
+                <span class="w-5 h-5 rounded-full bg-indigo-700 flex items-center justify-center text-[10px]">5</span> Pikiran Seimbang
+            </button>
+            <button onclick="switchSession(6)" id="nav-sesi-6" class="nav-tab px-3 py-2 rounded-xl text-xs md:text-sm font-bold whitespace-nowrap flex items-center gap-1.5 transition">
+                <span class="w-5 h-5 rounded-full bg-indigo-700 flex items-center justify-center text-[10px]">6</span> Rekap & Plan
+            </button>
+            <button onclick="switchSession('journal')" id="nav-sesi-journal" class="nav-tab px-3 py-2 rounded-xl text-xs md:text-sm font-bold whitespace-nowrap flex items-center gap-1.5 bg-emerald-700 hover:bg-emerald-600 transition">
+                <i class="fa-solid fa-book"></i> Jurnal & Rekap
+            </button>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-5xl mx-auto px-4 pt-6 flex-grow w-full">
+
+        <!-- ================= WELCOME / LANDING PAGE ================= -->
+        <section id="session-welcome" class="session-page space-y-6">
+            <div class="bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-50 p-6 md:p-10 rounded-3xl border border-indigo-100 soft-shadow text-center space-y-6 relative overflow-hidden">
+                <!-- Background Decorative Icons -->
+                <div class="absolute -top-6 -left-6 w-24 h-24 bg-indigo-200/40 rounded-full blur-xl pointer-events-none"></div>
+                <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-purple-200/40 rounded-full blur-xl pointer-events-none"></div>
+
+                <!-- Badges -->
+                <div class="flex flex-wrap items-center justify-center gap-2">
+                    <span class="bg-indigo-600 text-white text-xs font-extrabold px-3.5 py-1.5 rounded-full uppercase tracking-wider shadow-sm flex items-center gap-1.5">
+                        <i class="fa-solid fa-school"></i> SMP Negeri 1 Kotaanyar
+                    </span>
+                    <span class="bg-white/80 text-indigo-700 border border-indigo-200 text-xs font-extrabold px-3 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-user-pen"></i> Pengembang: Nur Kistin Kamalia
+                    </span>
+                </div>
+
+                <!-- Main Hero Header -->
+                <div class="max-w-2xl mx-auto space-y-4">
+                    <!-- High-Appeal Friendly Hero Mascot Icon -->
+                    <div class="relative w-32 h-32 mx-auto flex items-center justify-center">
+                        <!-- Outer Ambient Glow Aura -->
+                        <div class="absolute inset-0 bg-gradient-to-tr from-indigo-500 via-purple-400 to-pink-400 rounded-full blur-2xl opacity-50 animate-glow"></div>
+                        
+                        <!-- Main Animated Mascot Container -->
+                        <div class="relative w-28 h-28 rounded-3xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 p-1 shadow-xl shadow-indigo-200 animate-float transform hover:scale-110 transition duration-300 group cursor-pointer" onclick="speakText('Sahabat Pikiran! Mari belajar mengecek pikiran bersama.')" title="Klik untuk mendengarkan sapaan">
+                            <div class="w-full h-full bg-slate-900/10 rounded-[22px] backdrop-blur-sm flex items-center justify-center relative overflow-hidden">
+                                <!-- SVG Mascot Artwork (Cute Glowing Idea Lightbulb / Mind Mascot) -->
+                                <svg class="w-20 h-20 text-white drop-shadow-md" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Outer Glow Ring -->
+                                    <circle cx="50" cy="50" r="42" fill="url(#hero-grad)" opacity="0.3"/>
+                                    
+                                    <!-- Lightbulb / Mind Base Shape -->
+                                    <path d="M50 15C32 15 20 28 20 44C20 56 28 66 36 72V80C36 82.5 38 85 41 85H59C62 85 64 82.5 64 80V72C72 66 80 56 80 44C80 28 68 15 50 15Z" fill="white" fill-opacity="0.95"/>
+                                    
+                                    <!-- Bulb Metallic Threads Base -->
+                                    <rect x="38" y="87" width="24" height="4" rx="2" fill="#818cf8"/>
+                                    
+                                    <!-- Inner Brain Wave/Idea Filaments (Soft Indigo) -->
+                                    <path d="M35 34C35 27 42 22 50 22C58 22 65 27 65 34C65 38 61 41 57 41C53 41 53 36 50 36C47 36 47 41 43 41C39 41 35 38 35 34Z" stroke="#6366f1" stroke-width="3" stroke-linecap="round" fill="none"/>
+                                    
+                                    <!-- Big Expressive Cute Eyes (Sparkly) -->
+                                    <ellipse cx="38" cy="53" rx="4.5" ry="5.5" fill="#1e1b4b"/>
+                                    <circle cx="36.5" cy="51" r="1.8" fill="white"/>
+                                    
+                                    <ellipse cx="62" cy="53" rx="4.5" ry="5.5" fill="#1e1b4b"/>
+                                    <circle cx="60.5" cy="51" r="1.8" fill="white"/>
+                                    
+                                    <!-- Soft Rosy Cheeks -->
+                                    <ellipse cx="32" cy="59" rx="3.5" ry="2" fill="#fb7185" opacity="0.75"/>
+                                    <ellipse cx="68" cy="59" rx="3.5" ry="2" fill="#fb7185" opacity="0.75"/>
+                                    
+                                    <!-- Cute Happy Smile -->
+                                    <path d="M43 60C45.5 64 54.5 64 57 60" stroke="#1e1b4b" stroke-width="3" stroke-linecap="round" fill="none"/>
+                                    
+                                    <!-- Sparkle Idea Star -->
+                                    <path d="M50 8L52 13L57 15L52 17L50 22L48 17L43 15L48 13L50 8Z" fill="#fbbf24"/>
+                                    
+                                    <defs>
+                                        <linearGradient id="hero-grad" x1="0" y1="0" x2="100" y2="100">
+                                            <stop offset="0%" stop-color="#818cf8"/>
+                                            <stop offset="100%" stop-color="#c084fc"/>
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Floating Decorative Badges around mascot -->
+                        <div class="absolute -top-1 -right-1 w-8 h-8 rounded-full bg-amber-400 text-amber-950 flex items-center justify-center text-xs font-bold shadow-md animate-sparkle">
+                            ✨
+                        </div>
+                        <div class="absolute -bottom-2 -left-2 w-9 h-9 rounded-2xl bg-emerald-400 text-emerald-950 flex items-center justify-center text-sm font-bold shadow-md animate-sparkle" style="animation-delay: 1s;">
+                            💡
+                        </div>
+                        <div class="absolute top-1/2 -left-4 -translate-y-1/2 w-7 h-7 rounded-full bg-rose-400 text-white flex items-center justify-center text-xs font-bold shadow-md animate-sparkle" style="animation-delay: 0.5s;">
+                            ❤️
+                        </div>
+                    </div>
+
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-800 tracking-tight">
+                        Sahabat Pikiran
+                    </h2>
+                    <p class="text-sm sm:text-base font-bold text-indigo-900/80">
+                        Media Digital Thought Record • Konseling Kelompok Restrukturisasi Kognitif
+                    </p>
+                    <p class="text-xs sm:text-sm text-slate-600 font-semibold leading-relaxed">
+                        Selamat datang! Media interaktif ini dirancang khusus untuk membantumu mengecek pikiran, mengelola perasaan, dan belajar dengan rasa percaya diri yang lebih tinggi. Dilengkapi fitur <strong>Audio ke Teks</strong> dan <strong>Teks ke Audio</strong> untuk kemudahanmu.
+                    </p>
+                </div>
+
+                <!-- Action Button & Audio Intro -->
+                <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+                    <button onclick="speakText('Selamat datang di Sahabat Pikiran, Media Digital Thought Record SMP Negeri 1 Kotaanyar yang dikembangkan oleh Nur Kistin Kamalia. Mari belajar mengecek pikiran dan tingkatkan rasa percaya dirimu bersama-sama! Tekan tombol Mulai untuk memulai sesi pertama.')" class="w-full sm:w-auto bg-white hover:bg-slate-50 text-indigo-700 font-extrabold px-5 py-3.5 rounded-2xl text-xs sm:text-sm border border-indigo-200 shadow-sm transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-volume-high text-indigo-600 text-base"></i> Dengarkan Sambutan
+                    </button>
+                    
+                    <button onclick="switchSession(1)" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold px-8 py-3.5 rounded-2xl text-sm sm:text-base shadow-lg hover:shadow-indigo-300 transition flex items-center justify-center gap-2 transform hover:-translate-y-0.5">
+                        🚀 Mulai Konseling (Sesi 1) <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <!-- Feature Highlights -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-6 border-t border-indigo-100 text-left">
+                    <div class="p-3.5 bg-white/70 rounded-2xl border border-indigo-50 flex items-center gap-3">
+                        <span class="text-2xl">🎙️</span>
+                        <div>
+                            <span class="text-xs font-extrabold text-slate-800 block">Suara Ke Teks</span>
+                            <span class="text-[11px] text-slate-500 font-semibold">Bisa bicara tanpa repot mengetik</span>
+                        </div>
+                    </div>
+                    <div class="p-3.5 bg-white/70 rounded-2xl border border-indigo-50 flex items-center gap-3">
+                        <span class="text-2xl">🔊</span>
+                        <div>
+                            <span class="text-xs font-extrabold text-slate-800 block">Teks Ke Suara</span>
+                            <span class="text-[11px] text-slate-500 font-semibold">Bisa mendengarkan instruksi audio</span>
+                        </div>
+                    </div>
+                    <div class="p-3.5 bg-white/70 rounded-2xl border border-indigo-50 flex items-center gap-3">
+                        <span class="text-2xl">🎨</span>
+                        <div>
+                            <span class="text-xs font-extrabold text-slate-800 block">Warna Menenangkan</span>
+                            <span class="text-[11px] text-slate-500 font-semibold">Desain pastel minim kecemasan</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SESSION 1 ================= -->
+        <section id="session-1" class="session-page space-y-6 hidden">
+            <!-- Header Card -->
+            <div class="bg-gradient-to-r from-indigo-50 to-purple-50 p-6 rounded-3xl border border-indigo-100 soft-shadow flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Sesi 1</span>
+                        <span class="bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full">SMP Negeri 1 Kotaanyar</span>
+                    </div>
+                    <h2 class="text-xl md:text-2xl font-extrabold text-slate-800 mt-2">Mengenal Hubungan Situasi, Pikiran, Perasaan & Perilaku</h2>
+                    <p class="text-sm text-slate-600 mt-1">Pikiran kita seperti dugaan. Kita bisa belajar mengeceknya bersama-sama!</p>
+                </div>
+                <button onclick="speakText('Selamat datang di Sesi 1. Mari belajar bagaimana pikiran memengaruhi perasaan dan tindakan!')" class="bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-2xl flex items-center gap-2 font-bold text-sm shadow-md transition">
+                    <i class="fa-solid fa-volume-high text-lg"></i> Dengarkan Instruksi
+                </button>
+            </div>
+
+            <!-- Interactive Tokoh Story (Anak A vs Anak B) -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-100 soft-shadow space-y-4">
+                <div class="flex items-center justify-between border-b pb-3">
+                    <h3 class="font-extrabold text-slate-800 text-lg flex items-center gap-2">
+                        <i class="fa-solid fa-book-open text-indigo-500"></i> Contoh Dua Teman (Situasi Sama)
+                    </h3>
+                    <span class="text-xs bg-slate-100 text-slate-600 font-bold px-2.5 py-1 rounded-lg">Situasi: Diminta membaca di depan kelas</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Character A -->
+                    <div class="bg-rose-50/70 border border-rose-100 p-5 rounded-2xl space-y-3 relative">
+                        <div class="flex items-center justify-between">
+                            <span class="font-extrabold text-rose-700 text-base flex items-center gap-2">
+                                <i class="fa-solid fa-user text-rose-500"></i> Tokoh A (Budi)
+                            </span>
+                            <button onclick="speakText('Budi diminta membaca di depan kelas. Pikiran Budi: Aku pasti salah dan ditertawakan. Perasaan Budi: Malu dan cemas tinggi. Tindakan Budi: Menunduk dan tidak mau membaca.')" class="text-rose-600 hover:text-rose-800">
+                                <i class="fa-solid fa-volume-high"></i>
+                            </button>
+                        </div>
+                        <div class="text-xs font-bold text-rose-900/80 space-y-1">
+                            <p><span class="text-rose-600">🧠 Pikiran:</span> "Aku pasti salah dan ditertawakan."</p>
+                            <p><span class="text-rose-600">❤️ Perasaan:</span> Malu & Cemas Tinggi (8/10)</p>
+                            <p><span class="text-rose-600">🚶 Perilaku:</span> Menunduk, menolak membaca.</p>
+                        </div>
+                    </div>
+
+                    <!-- Character B -->
+                    <div class="bg-emerald-50/70 border border-emerald-100 p-5 rounded-2xl space-y-3 relative">
+                        <div class="flex items-center justify-between">
+                            <span class="font-extrabold text-emerald-700 text-base flex items-center gap-2">
+                                <i class="fa-solid fa-user-check text-emerald-500"></i> Tokoh B (Deni)
+                            </span>
+                            <button onclick="speakText('Deni diminta membaca di depan kelas. Pikiran Deni: Aku belum lancar, tapi boleh mencoba pelan-pelan. Perasaan Deni: Agak gugup tapi tenang. Tindakan Deni: Maju dan mencoba membaca.')" class="text-emerald-600 hover:text-emerald-800">
+                                <i class="fa-solid fa-volume-high"></i>
+                            </button>
+                        </div>
+                        <div class="text-xs font-bold text-emerald-900/80 space-y-1">
+                            <p><span class="text-emerald-600">🧠 Pikiran:</span> "Aku belum lancar, tapi boleh mencoba pelan-pelan."</p>
+                            <p><span class="text-emerald-600">❤️ Perasaan:</span> Agak Gugup tapi Tenang (3/10)</p>
+                            <p><span class="text-emerald-600">🚶 Perilaku:</span> Maju ke depan & mencoba.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-indigo-50/60 p-4 rounded-2xl border border-indigo-100 text-xs sm:text-sm font-semibold text-slate-700 flex items-center gap-3">
+                    <i class="fa-solid fa-lightbulb text-amber-500 text-2xl flex-shrink-0"></i>
+                    <span><strong>Pertanyaan Diskusi:</strong> Situasinya sama persis, tetapi kenapa perasaan dan tindakan Budi dan Deni sangat berbeda? Jawabannya ada pada <em>Pikiran</em> mereka!</span>
+                </div>
+            </div>
+
+            <!-- Group Rules Checklist -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-100 soft-shadow space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-extrabold text-slate-800 text-lg flex items-center gap-2">
+                        <i class="fa-solid fa-handshake-angle text-indigo-600"></i> Kesepakatan Aturan Kelompok Kita
+                    </h3>
+                    <button onclick="speakText('Aturan kelompok: 1. Menjaga kerahasiaan. 2. Saling menghargai. 3. Boleh melewati jika belum siap. 4. Hadir tepat waktu. 5. Jujur pada diri sendiri.')" class="text-indigo-600">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs md:text-sm font-bold text-slate-700">
+                    <label class="flex items-center p-3 bg-slate-50 hover:bg-indigo-50/40 rounded-2xl cursor-pointer transition border border-slate-100">
+                        <input type="checkbox" checked class="w-4 h-4 text-indigo-600 rounded mr-3"> 1. Kerahasiaan Terjaga (Aman bersama)
+                    </label>
+                    <label class="flex items-center p-3 bg-slate-50 hover:bg-indigo-50/40 rounded-2xl cursor-pointer transition border border-slate-100">
+                        <input type="checkbox" checked class="w-4 h-4 text-indigo-600 rounded mr-3"> 2. Saling Menghargai (Tidak menertawakan)
+                    </label>
+                    <label class="flex items-center p-3 bg-slate-50 hover:bg-indigo-50/40 rounded-2xl cursor-pointer transition border border-slate-100">
+                        <input type="checkbox" checked class="w-4 h-4 text-indigo-600 rounded mr-3"> 3. Boleh "Pass" (Jika belum siap)
+                    </label>
+                    <label class="flex items-center p-3 bg-slate-50 hover:bg-indigo-50/40 rounded-2xl cursor-pointer transition border border-slate-100">
+                        <input type="checkbox" checked class="w-4 h-4 text-indigo-600 rounded mr-3"> 4. Hadir Tepat Waktu
+                    </label>
+                </div>
+                <div class="pt-2 flex justify-end">
+                    <button onclick="document.getElementById('dragGameSection').scrollIntoView({ behavior: 'smooth' })" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-2xl font-extrabold text-sm flex items-center gap-2 shadow-md transition">
+                        Lanjut ke Permainan Kartu <i class="fa-solid fa-gamepad"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- NEW: Interactive Drag & Drop Card Game (Dipindahkan Setelah Kesepakatan) -->
+            <div id="dragGameSection" class="bg-white p-6 rounded-3xl border border-slate-100 soft-shadow space-y-5">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b pb-3">
+                    <div>
+                        <h3 class="font-extrabold text-slate-800 text-lg flex items-center gap-2">
+                            <i class="fa-solid fa-hand-pointer text-indigo-600"></i> Permainan Tarik & Lepas (Drag & Drop) Kartu
+                        </h3>
+                        <p class="text-xs text-slate-500 font-semibold mt-0.5">Tarik kartu atau sentuh kartu lalu pasang ke kotak kategori yang tepat.</p>
+                    </div>
+                    <button onclick="resetDragGame()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl transition w-fit">
+                        <i class="fa-solid fa-rotate-right"></i> Acak & Ulangi
+                    </button>
+                </div>
+
+                <!-- Progress Counter & Hint -->
+                <div class="flex items-center justify-between bg-indigo-50/80 px-4 py-2.5 rounded-2xl border border-indigo-100 text-xs font-bold text-indigo-900">
+                    <span>Kartu Terpasang Benar: <span id="dragScore" class="text-indigo-600 font-extrabold text-sm">0 / 4</span></span>
+                    <span id="dragBadge" class="hidden bg-emerald-600 text-white text-[10px] uppercase font-extrabold px-2.5 py-1 rounded-full animate-bounce">🎉 Susunan Tepat!</span>
+                </div>
+
+                <!-- Draggable Cards Pool -->
+                <div>
+                    <p class="text-xs font-extrabold text-slate-600 mb-2">🃏 Kartu Yang Harus Disusun (Tarik atau Sentuh):</p>
+                    <div id="dragCardPool" class="grid grid-cols-1 sm:grid-cols-2 gap-3 min-h-[70px]">
+                        <!-- Dynamic Draggable Cards injected by JS -->
+                    </div>
+                </div>
+
+                <!-- 4 Target Drop Zones -->
+                <div>
+                    <p class="text-xs font-extrabold text-slate-600 mb-2">🎯 Kotak Kategori Target:</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <!-- Drop Zone Situasi -->
+                        <div id="zone-situasi" ondragover="allowDrop(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'situasi')" onclick="handleZoneClick('situasi')" class="drop-zone p-4 rounded-2xl border-2 border-dashed border-sky-300 bg-sky-50/50 hover:bg-sky-100/60 transition min-h-[120px] flex flex-col justify-between cursor-pointer">
+                            <div class="flex items-center justify-between font-extrabold text-sky-800 text-xs border-b border-sky-200 pb-2">
+                                <span>📍 1. SITUASI</span>
+                                <span class="text-[10px] bg-sky-200 text-sky-900 px-2 py-0.5 rounded-md">Peristiwa</span>
+                            </div>
+                            <div class="zone-content flex-grow flex items-center justify-center pt-2">
+                                <span class="text-xs text-sky-400 font-bold italic text-center drop-placeholder">Tarik / Tempel Kartu Situasi Ke Sini</span>
+                            </div>
+                        </div>
+
+                        <!-- Drop Zone Pikiran -->
+                        <div id="zone-pikiran" ondragover="allowDrop(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'pikiran')" onclick="handleZoneClick('pikiran')" class="drop-zone p-4 rounded-2xl border-2 border-dashed border-purple-300 bg-purple-50/50 hover:bg-purple-100/60 transition min-h-[120px] flex flex-col justify-between cursor-pointer">
+                            <div class="flex items-center justify-between font-extrabold text-purple-800 text-xs border-b border-purple-200 pb-2">
+                                <span>🧠 2. PIKIRAN</span>
+                                <span class="text-[10px] bg-purple-200 text-purple-900 px-2 py-0.5 rounded-md">Dugaan Otak</span>
+                            </div>
+                            <div class="zone-content flex-grow flex items-center justify-center pt-2">
+                                <span class="text-xs text-purple-400 font-bold italic text-center drop-placeholder">Tarik / Tempel Kartu Pikiran Ke Sini</span>
+                            </div>
+                        </div>
+
+                        <!-- Drop Zone Perasaan -->
+                        <div id="zone-perasaan" ondragover="allowDrop(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'perasaan')" onclick="handleZoneClick('perasaan')" class="drop-zone p-4 rounded-2xl border-2 border-dashed border-rose-300 bg-rose-50/50 hover:bg-rose-100/60 transition min-h-[120px] flex flex-col justify-between cursor-pointer">
+                            <div class="flex items-center justify-between font-extrabold text-rose-800 text-xs border-b border-rose-200 pb-2">
+                                <span>❤️ 3. PERASAAN</span>
+                                <span class="text-[10px] bg-rose-200 text-rose-900 px-2 py-0.5 rounded-md">Emosi Tubuh</span>
+                            </div>
+                            <div class="zone-content flex-grow flex items-center justify-center pt-2">
+                                <span class="text-xs text-rose-400 font-bold italic text-center drop-placeholder">Tarik / Tempel Kartu Perasaan Ke Sini</span>
+                            </div>
+                        </div>
+
+                        <!-- Drop Zone Perilaku -->
+                        <div id="zone-perilaku" ondragover="allowDrop(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'perilaku')" onclick="handleZoneClick('perilaku')" class="drop-zone p-4 rounded-2xl border-2 border-dashed border-emerald-300 bg-emerald-50/50 hover:bg-emerald-100/60 transition min-h-[120px] flex flex-col justify-between cursor-pointer">
+                            <div class="flex items-center justify-between font-extrabold text-emerald-800 text-xs border-b border-emerald-200 pb-2">
+                                <span>🚶 4. PERILAKU</span>
+                                <span class="text-[10px] bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded-md">Tindakan</span>
+                            </div>
+                            <div class="zone-content flex-grow flex items-center justify-center pt-2">
+                                <span class="text-xs text-emerald-400 font-bold italic text-center drop-placeholder">Tarik / Tempel Kartu Perilaku Ke Sini</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-2 flex justify-end">
+                    <button onclick="switchSession(2)" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-2xl font-extrabold text-sm flex items-center gap-2 shadow-md transition">
+                        Lanjut ke Sesi 2 <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SESSION 2 ================= -->
+        <section id="session-2" class="session-page space-y-6 hidden">
+            <div class="bg-gradient-to-r from-sky-50 to-indigo-50 p-6 rounded-3xl border border-sky-100 soft-shadow flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                    <span class="bg-sky-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Sesi 2</span>
+                    <h2 class="text-xl md:text-2xl font-extrabold text-slate-800 mt-2">Menangkap Situasi, Perasaan & Pikiran Otomatis</h2>
+                    <p class="text-sm text-slate-600 mt-1">Pilih atau sebutkan situasi yang membuatmu merasa tidak nyaman minggu ini.</p>
+                </div>
+                <button onclick="speakText('Di Sesi 2 ini, pilih kartu situasi yang pernah kamu alami, atau gunakan tombol mikrofon untuk menceritakan situasimu tanpa perlu mengetik!')" class="bg-sky-600 hover:bg-sky-700 text-white p-3 rounded-2xl flex items-center gap-2 font-bold text-sm shadow-md transition">
+                    <i class="fa-solid fa-volume-high text-lg"></i> Petunjuk Audio
+                </button>
+            </div>
+
+            <!-- Step 1: Preset Situation Selector -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-100 soft-shadow space-y-4">
+                <h3 class="font-extrabold text-slate-800 text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-layer-group text-sky-600"></i> 1. Pilih Kartu Situasi Pemicu
+                </h3>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <button onclick="selectPresetSituation('Diminta membaca di depan kelas')" class="preset-sit-btn p-4 rounded-2xl border-2 border-slate-100 hover:border-sky-400 bg-slate-50 hover:bg-sky-50 text-left transition flex flex-col items-center text-center space-y-2">
+                        <i class="fa-solid fa-book-reader text-2xl text-sky-600"></i>
+                        <span class="text-xs font-bold text-slate-700">Membaca di Depan Kelas</span>
+                    </button>
+                    <button onclick="selectPresetSituation('Diminta menulis di papan tulis')" class="preset-sit-btn p-4 rounded-2xl border-2 border-slate-100 hover:border-sky-400 bg-slate-50 hover:bg-sky-50 text-left transition flex flex-col items-center text-center space-y-2">
+                        <i class="fa-solid fa-chalkboard-user text-2xl text-sky-600"></i>
+                        <span class="text-xs font-bold text-slate-700">Menulis di Papan Tulis</span>
+                    </button>
+                    <button onclick="selectPresetSituation('Mendapat nilai tugas kurang bagus')" class="preset-sit-btn p-4 rounded-2xl border-2 border-slate-100 hover:border-sky-400 bg-slate-50 hover:bg-sky-50 text-left transition flex flex-col items-center text-center space-y-2">
+                        <i class="fa-solid fa-file-pen text-2xl text-sky-600"></i>
+                        <span class="text-xs font-bold text-slate-700">Nilai Kurang Bagus</span>
+                    </button>
+                    <button onclick="selectPresetSituation('Guru memanggil namaku untuk menjawab')" class="preset-sit-btn p-4 rounded-2xl border-2 border-slate-100 hover:border-sky-400 bg-slate-50 hover:bg-sky-50 text-left transition flex flex-col items-center text-center space-y-2">
+                        <i class="fa-solid fa-bullhorn text-2xl text-sky-600"></i>
+                        <span class="text-xs font-bold text-slate-700">Guru Memanggil Namaku</span>
+                    </button>
+                </div>
+
+                <!-- Input Field with Mic -->
+                <div class="mt-4">
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Atau Ceritakan Situasimu Sendiri:</label>
+                    <div class="relative">
+                        <input type="text" id="inputSituasi" placeholder="Contoh: Saat disuruh membaca keras-keras..." class="w-full pr-12 pl-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 text-sm focus:outline-none focus:border-sky-500">
+                        <button onclick="startVoiceInput('inputSituasi')" class="absolute right-2 top-2 p-2 bg-rose-500 hover:bg-rose-600 text-white rounded-xl shadow transition" title="Bicara dengan Suara">
+                            <i class="fa-solid fa-microphone"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Emotion & Intensity Scale (0-10) -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-100 soft-shadow space-y-4">
+                <h3 class="font-extrabold text-slate-800 text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-heart-pulse text-rose-500"></i> 2. Apa Perasaanmu & Seberapa Kuat (0 - 10)?
+                </h3>
+
+                <!-- Emotion Picker Buttons -->
+                <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                    <button onclick="selectEmotion('Cemas/Gugup', '😰')" class="emo-btn p-3 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-rose-50 text-center font-bold text-xs flex flex-col items-center gap-1">
+                        <span class="text-2xl">😰</span> Cemas / Gugup
+                    </button>
+                    <button onclick="selectEmotion('Malu', '😳')" class="emo-btn p-3 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-rose-50 text-center font-bold text-xs flex flex-col items-center gap-1">
+                        <span class="text-2xl">😳</span> Malu
+                    </button>
+                    <button onclick="selectEmotion('Takut', '😨')" class="emo-btn p-3 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-rose-50 text-center font-bold text-xs flex flex-col items-center gap-1">
+                        <span class="text-2xl">😨</span> Takut Salah
+                    </button>
+                    <button onclick="selectEmotion('Sedih', '😢')" class="emo-btn p-3 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-rose-50 text-center font-bold text-xs flex flex-col items-center gap-1">
+                        <span class="text-2xl">😢</span> Sedih
+                    </button>
+                    <button onclick="selectEmotion('Marah/Kesal', '😠')" class="emo-btn p-3 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-rose-50 text-center font-bold text-xs flex flex-col items-center gap-1">
+                        <span class="text-2xl">😠</span> Kesal / Kecewa
+                    </button>
+                </div>
+
+                <!-- Emotion Intensity Slider -->
+                <div class="bg-rose-50/50 p-4 rounded-2xl border border-rose-100 space-y-2">
+                    <div class="flex justify-between items-center text-xs font-bold text-slate-700">
+                        <span>Tingkat Kekuatan Perasaan:</span>
+                        <span id="emoValueDisplay" class="text-rose-600 text-base font-extrabold">Skala: 7 / 10</span>
+                    </div>
+                    <input type="range" id="emoSlider" min="0" max="10" value="7" oninput="updateEmotionValue(this.value)" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-rose-500">
+                </div>
+            </div>
+
+            <!-- Step 3: Automatic Thought Input -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-100 soft-shadow space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b pb-3">
+                    <h3 class="font-extrabold text-slate-800 text-lg flex items-center gap-2">
+                        <i class="fa-solid fa-comment-dots text-indigo-600"></i> 3. Pikiran Otomatis yang Melintas
+                    </h3>
+                    <span class="text-xs bg-indigo-50 text-indigo-700 font-bold px-3 py-1 rounded-full w-fit">
+                        💡 Klik opsi di bawah atau tulis/rekam sendiri
+                    </span>
+                </div>
+
+                <!-- 4 Preset Automatic Thought Options -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-2">Pilih Salah Satu Contoh Pikiran yang Paling Sering Muncul:</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <button onclick="selectPresetThought('Tulisanku jelek dan aku pasti salah membaca, teman-teman akan menertawakanku.')" class="preset-thought-btn p-3.5 bg-slate-50 hover:bg-indigo-50/80 border border-slate-200 hover:border-indigo-400 rounded-2xl text-left transition flex items-start gap-3 group">
+                            <span class="text-xl flex-shrink-0 mt-0.5">💭</span>
+                            <div>
+                                <span class="text-xs font-extrabold text-slate-800 group-hover:text-indigo-900 block">"Pasti Salah & Ditertawakan"</span>
+                                <p class="text-[11px] text-slate-500 font-semibold leading-snug">"Tulisanku jelek dan aku pasti salah membaca, teman-teman akan menertawakanku."</p>
+                            </div>
+                        </button>
+
+                        <button onclick="selectPresetThought('Aku memang tidak pintar dan tidak akan pernah bisa melakukannya.')" class="preset-thought-btn p-3.5 bg-slate-50 hover:bg-indigo-50/80 border border-slate-200 hover:border-indigo-400 rounded-2xl text-left transition flex items-start gap-3 group">
+                            <span class="text-xl flex-shrink-0 mt-0.5">😔</span>
+                            <div>
+                                <span class="text-xs font-extrabold text-slate-800 group-hover:text-indigo-900 block">"Aku Memang Tidak Pintar"</span>
+                                <p class="text-[11px] text-slate-500 font-semibold leading-snug">"Aku memang tidak pintar dan tidak akan pernah bisa melakukannya."</p>
+                            </div>
+                        </button>
+
+                        <button onclick="selectPresetThought('Semua orang sedang memperhatikan dan mencari kesalahanku.')" class="preset-thought-btn p-3.5 bg-slate-50 hover:bg-indigo-50/80 border border-slate-200 hover:border-indigo-400 rounded-2xl text-left transition flex items-start gap-3 group">
+                            <span class="text-xl flex-shrink-0 mt-0.5">👀</span>
+                            <div>
+                                <span class="text-xs font-extrabold text-slate-800 group-hover:text-indigo-900 block">"Semua Orang Memperhatikan Kesalahanku"</span>
+                                <p class="text-[11px] text-slate-500 font-semibold leading-snug">"Semua orang sedang memperhatikan dan mencari kesalahanku."</p>
+                            </div>
+                        </button>
+
+                        <button onclick="selectPresetThought('Guru dan teman-teman pasti akan kecewa atau marah padaku.')" class="preset-thought-btn p-3.5 bg-slate-50 hover:bg-indigo-50/80 border border-slate-200 hover:border-indigo-400 rounded-2xl text-left transition flex items-start gap-3 group">
+                            <span class="text-xl flex-shrink-0 mt-0.5">😟</span>
+                            <div>
+                                <span class="text-xs font-extrabold text-slate-800 group-hover:text-indigo-900 block">"Guru/Teman Bakal Kecewa"</span>
+                                <p class="text-[11px] text-slate-500 font-semibold leading-snug">"Guru dan teman-teman pasti akan kecewa atau marah padaku."</p>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Custom Input Field with Speech-to-Text Mic Button -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Atau Tulis / Rekam Suara Pikiranmu Sendiri:</label>
+                    <div class="relative">
+                        <textarea id="inputPikiranAwal" rows="3" placeholder="Contoh: Tulisanku jelek, pasti semua orang mengetawakan aku..." class="w-full pr-12 p-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 text-sm focus:outline-none focus:border-indigo-500"></textarea>
+                        <button onclick="startVoiceInput('inputPikiranAwal')" class="absolute right-3 top-3 p-3 bg-rose-500 hover:bg-rose-600 text-white rounded-xl shadow transition" title="Bicara dengan Suara">
+                            <i class="fa-solid fa-microphone text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center pt-2">
+                    <button onclick="speakInputText('inputPikiranAwal')" class="text-xs font-bold text-indigo-600 hover:underline flex items-center gap-1">
+                        <i class="fa-solid fa-volume-high"></i> Dengarkan Apa yang Kutulis
+                    </button>
+                    <button onclick="switchSession(3)" class="bg-sky-600 hover:bg-sky-700 text-white px-6 py-3 rounded-2xl font-extrabold text-sm flex items-center gap-2 shadow-md transition">
+                        Lanjut Kenali Monster <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SESSION 3 ================= -->
+        <section id="session-3" class="session-page space-y-6 hidden">
+            <div class="bg-gradient-to-r from-rose-50 to-purple-50 p-6 rounded-3xl border border-rose-100 soft-shadow flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                    <span class="bg-rose-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Sesi 3 • Zona Merah</span>
+                    <h2 class="text-xl md:text-2xl font-extrabold text-slate-800 mt-2">Mengenali Monster Pikiran (Distorsi Kognitif)</h2>
+                    <p class="text-sm text-slate-600 mt-1">Monster pikiran sering membuat kita berprasangka buruk. Jenis monster mana yang sedang hinggap?</p>
+                </div>
+                <button onclick="speakText('Sesi 3: Mengenali 4 Monster Pikiran. Klik salah satu monster untuk mendengarkan cirinya, lalu pilih yang sesuai dengan pikiranmu!')" class="bg-rose-600 hover:bg-rose-700 text-white p-3 rounded-2xl flex items-center gap-2 font-bold text-sm shadow-md transition">
+                    <i class="fa-solid fa-volume-high text-lg"></i> Dengar Penjelasan
+                </button>
+            </div>
+
+            <!-- 4 Monster Cards Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Monster 1 -->
+                <div onclick="selectMonster('Si Pelabel', 'Aku memang bodoh / tidak bisa')" class="monster-card p-5 bg-white rounded-3xl border-2 border-slate-100 hover:border-rose-400 cursor-pointer transition soft-shadow space-y-3 relative group">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 text-2xl flex items-center justify-center font-bold">🏷️</div>
+                        <div>
+                            <h4 class="font-extrabold text-slate-800 text-base">Si Pelabel</h4>
+                            <p class="text-xs text-rose-600 font-bold">"Mengecap Diri Sendiri Buruk"</p>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-600 font-semibold">Suka memberi stiker buruk pada diri sendiri, seperti: <em>"Aku memang bodoh", "Aku memang malas."</em></p>
+                    <button onclick="event.stopPropagation(); speakText('Si Pelabel: Suka memberi stiker buruk pada diri sendiri, seperti Aku memang bodoh atau Aku tidak pintar.')" class="text-xs text-rose-600 font-bold flex items-center gap-1">
+                        <i class="fa-solid fa-volume-high"></i> Dengar Ciri
+                    </button>
+                </div>
+
+                <!-- Monster 2 -->
+                <div onclick="selectMonster('Si Pukul Rata', 'Aku tidak pernah bisa selamanya')" class="monster-card p-5 bg-white rounded-3xl border-2 border-slate-100 hover:border-rose-400 cursor-pointer transition soft-shadow space-y-3 relative group">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 text-2xl flex items-center justify-center font-bold">🧹</div>
+                        <div>
+                            <h4 class="font-extrabold text-slate-800 text-base">Si Pukul Rata</h4>
+                            <p class="text-xs text-amber-600 font-bold">"Menganggap Selalu & Gak Pernah"</p>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-600 font-semibold">Satu kesalahan membuatmu berpikir: <em>"Aku tidak pernah bisa!"</em> atau <em>"Semuanya pasti gagal."</em></p>
+                    <button onclick="event.stopPropagation(); speakText('Si Pukul Rata: Menganggap satu kegagalan berlaku untuk selamanya. Katanya: Aku tidak pernah bisa sama sekali.')" class="text-xs text-amber-600 font-bold flex items-center gap-1">
+                        <i class="fa-solid fa-volume-high"></i> Dengar Ciri
+                    </button>
+                </div>
+
+                <!-- Monster 3 -->
+                <div onclick="selectMonster('Peramal Bencana', 'Pasti semua orang menertawakanku')" class="monster-card p-5 bg-white rounded-3xl border-2 border-slate-100 hover:border-rose-400 cursor-pointer transition soft-shadow space-y-3 relative group">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-purple-100 text-purple-600 text-2xl flex items-center justify-center font-bold">💥</div>
+                        <div>
+                            <h4 class="font-extrabold text-slate-800 text-base">Peramal Bencana</h4>
+                            <p class="text-xs text-purple-600 font-bold">"Membayangkan Yang Terburuk"</p>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-600 font-semibold">Meramal hal yang paling menakutkan padahal belum terjadi: <em>"Pasti semua orang menertawakanku!"</em></p>
+                    <button onclick="event.stopPropagation(); speakText('Peramal Bencana: Meramal hal yang paling buruk padahal belum tentu terjadi, seperti: Pasti nanti aku dipermalukan.')" class="text-xs text-purple-600 font-bold flex items-center gap-1">
+                        <i class="fa-solid fa-volume-high"></i> Dengar Ciri
+                    </button>
+                </div>
+
+                <!-- Monster 4 -->
+                <div onclick="selectMonster('Pembaca Pikiran', 'Mereka pasti mengira aku aneh')" class="monster-card p-5 bg-white rounded-3xl border-2 border-slate-100 hover:border-rose-400 cursor-pointer transition soft-shadow space-y-3 relative group">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 text-2xl flex items-center justify-center font-bold">🔮</div>
+                        <div>
+                            <h4 class="font-extrabold text-slate-800 text-base">Pembaca Pikiran</h4>
+                            <p class="text-xs text-blue-600 font-bold">"Merasa Tahu Isi Hati Orang Lain"</p>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-600 font-semibold">Merasa yakin orang lain berpikir buruk tentang kita: <em>"Mereka pasti mengira aku bodoh."</em></p>
+                    <button onclick="event.stopPropagation(); speakText('Pembaca Pikiran: Berprasangka bahwa orang lain sedang berpikiran jelek tentang diri kita.')" class="text-xs text-blue-600 font-bold flex items-center gap-1">
+                        <i class="fa-solid fa-volume-high"></i> Dengar Ciri
+                    </button>
+                </div>
+            </div>
+
+            <!-- Selected Monster Banner & Belief Slider -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-100 soft-shadow space-y-5">
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-bold text-slate-500 uppercase">Monster Terpilih:</span>
+                        <h4 id="selectedMonsterDisplay" class="text-base font-extrabold text-rose-600">Belum Ada Monster Dipilih</h4>
+                    </div>
+                    <span id="monsterBadgeIcon" class="text-3xl">❓</span>
+                </div>
+
+                <!-- Slider Belief 0 - 100% -->
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center text-xs font-bold text-slate-700">
+                        <span>Seberapa kuat kamu PERCAYA pada pikiran buruk itu saat ini?</span>
+                        <span id="beliefValueDisplay" class="text-indigo-600 text-base font-extrabold">90% (Sangat Yakin)</span>
+                    </div>
+                    <input type="range" id="beliefSlider" min="0" max="100" value="90" oninput="updateBeliefValue(this.value)" class="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600 custom-slider">
+                </div>
+
+                <div class="flex justify-end pt-2">
+                    <button onclick="switchSession(4)" class="bg-rose-600 hover:bg-rose-700 text-white px-6 py-3 rounded-2xl font-extrabold text-sm flex items-center gap-2 shadow-md transition">
+                        Lanjut Menguji Bukti <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SESSION 4 ================= -->
+        <section id="session-4" class="session-page space-y-6 hidden">
+            <div class="bg-gradient-to-r from-amber-50 to-orange-50 p-6 rounded-3xl border border-amber-100 soft-shadow flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                    <span class="bg-amber-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Sesi 4 • Detektif Bukti</span>
+                    <h2 class="text-xl md:text-2xl font-extrabold text-slate-800 mt-2">Menjadi Detektif Bukti & Kata Pertolongan</h2>
+                    <p class="text-sm text-slate-600 mt-1">Mari kumpulkan bukti nyata: Mana fakta pendukung dan mana fakta penentangnya!</p>
+                </div>
+                <button onclick="speakText('Di Sesi 4, kita berperan sebagai detektif. Kamu bisa memilih salah satu dari 4 contoh situasi di bawah untuk gambaran jelas, atau gunakan tombol mikrofon untuk merekam situasimu sendiri!')" class="bg-amber-600 hover:bg-amber-700 text-white p-3 rounded-2xl flex items-center gap-2 font-bold text-sm shadow-md transition">
+                    <i class="fa-solid fa-volume-high text-lg"></i> Dengar Petunjuk
+                </button>
+            </div>
+
+            <!-- Preset Situations for Evidence Detective (3-4 Choice Cards) -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-100 soft-shadow space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b pb-3">
+                    <h3 class="font-extrabold text-slate-800 text-base md:text-lg flex items-center gap-2">
+                        <i class="fa-solid fa-folder-open text-amber-600"></i> Pilih Contoh Gambaran Situasi (4 Pilihan)
+                    </h3>
+                    <span class="text-xs bg-amber-100 text-amber-800 font-bold px-3 py-1 rounded-full w-fit">
+                        💡 Klik untuk memuat gambaran bukti
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    <button onclick="selectDetectivePreset(1)" class="p-3.5 bg-slate-50 hover:bg-amber-50/80 border border-slate-200 hover:border-amber-400 rounded-2xl text-left transition flex flex-col justify-between space-y-2 group">
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">📖</span>
+                            <span class="text-xs font-extrabold text-slate-800 group-hover:text-amber-900">1. Membaca di Depan Kelas</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 font-semibold leading-relaxed">Mengecek fakta saat terbata-bata membaca kata yang panjang.</p>
+                    </button>
+
+                    <button onclick="selectDetectivePreset(2)" class="p-3.5 bg-slate-50 hover:bg-amber-50/80 border border-slate-200 hover:border-amber-400 rounded-2xl text-left transition flex flex-col justify-between space-y-2 group">
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">✍️</span>
+                            <span class="text-xs font-extrabold text-slate-800 group-hover:text-amber-900">2. Menulis di Papan Tulis</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 font-semibold leading-relaxed">Mengecek fakta tulisan miring atau ada salah eja.</p>
+                    </button>
+
+                    <button onclick="selectDetectivePreset(3)" class="p-3.5 bg-slate-50 hover:bg-amber-50/80 border border-slate-200 hover:border-amber-400 rounded-2xl text-left transition flex flex-col justify-between space-y-2 group">
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">📝</span>
+                            <span class="text-xs font-extrabold text-slate-800 group-hover:text-amber-900">3. Mengerjakan Kuis / Ujian</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 font-semibold leading-relaxed">Mengecek fakta waktu pengerjaan soal yang terasa lambat.</p>
+                    </button>
+
+                    <button onclick="selectDetectivePreset(4)" class="p-3.5 bg-slate-50 hover:bg-amber-50/80 border border-slate-200 hover:border-amber-400 rounded-2xl text-left transition flex flex-col justify-between space-y-2 group">
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">🙋‍♂️</span>
+                            <span class="text-xs font-extrabold text-slate-800 group-hover:text-amber-900">4. Menjawab Pertanyaan Guru</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 font-semibold leading-relaxed">Mengecek fakta butuh waktu untuk merangkai ucapan.</p>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Socratic Questions Cards with Audio -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-100 soft-shadow space-y-4">
+                <h3 class="font-extrabold text-slate-800 text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-magnifying-glass text-amber-600"></i> Pertanyaan Detektif (Sokratik)
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div class="p-4 bg-amber-50/60 rounded-2xl border border-amber-100 flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-extrabold text-amber-900">1. Pertanyaan Sahabat:</p>
+                            <p class="text-xs font-bold text-slate-700">"Jika teman baikmu yang berpikir begini, apa yang akan kamu katakan padanya?"</p>
+                        </div>
+                        <button onclick="speakText('Jika teman baikmu yang merasa tidak bisa membaca, apa kata-kata penyemangat yang akan kamu katakan padanya?')" class="text-amber-600">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </button>
+                    </div>
+
+                    <div class="p-4 bg-amber-50/60 rounded-2xl border border-amber-100 flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-extrabold text-amber-900">2. Kemungkinan Realistis:</p>
+                            <p class="text-xs font-bold text-slate-700">"Apa kemungkinan paling realistis yang sebenarnya terjadi?"</p>
+                        </div>
+                        <button onclick="speakText('Apa hal paling realistis yang akan terjadi jika kamu mencoba membaca pelan-pelan?')" class="text-amber-600">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Evidence Columns -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Column Supporting Evidence -->
+                <div class="bg-white p-5 rounded-3xl border border-slate-100 soft-shadow space-y-3">
+                    <div class="flex items-center justify-between border-b pb-2">
+                        <h4 class="font-extrabold text-rose-700 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-thumbs-down"></i> Bukti Yang Mendukung
+                        </h4>
+                        <span class="text-[10px] bg-rose-100 text-rose-700 px-2 py-0.5 rounded-md font-bold">Fakta Nyata</span>
+                    </div>
+
+                    <!-- 4 Preset Buttons for Supporting Evidence -->
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-600 mb-1.5">Pilih 1 dari 4 Contoh Bukti Mendukung:</label>
+                        <div class="grid grid-cols-1 gap-2">
+                            <button onclick="selectSupportingEvidence('Pernah terbata-bata atau salah mengucapkan kata saat membaca.')" class="preset-sup-btn p-2.5 bg-slate-50 hover:bg-rose-50/80 border border-slate-200 hover:border-rose-400 rounded-xl text-left transition flex items-start gap-2 text-xs font-bold text-slate-700">
+                                <span>📖</span> <span>Pernah terbata-bata atau salah membaca kata.</span>
+                            </button>
+                            <button onclick="selectSupportingEvidence('Pernah butuh waktu lebih lama atau ada salah eja saat menulis.')" class="preset-sup-btn p-2.5 bg-slate-50 hover:bg-rose-50/80 border border-slate-200 hover:border-rose-400 rounded-xl text-left transition flex items-start gap-2 text-xs font-bold text-slate-700">
+                                <span>✍️</span> <span>Pernah butuh waktu lama & ada salah eja.</span>
+                            </button>
+                            <button onclick="selectSupportingEvidence('Pernah merasa pengerjaan tugas atau kuis lebih lambat.')" class="preset-sup-btn p-2.5 bg-slate-50 hover:bg-rose-50/80 border border-slate-200 hover:border-rose-400 rounded-xl text-left transition flex items-start gap-2 text-xs font-bold text-slate-700">
+                                <span>⏱️</span> <span>Pernah selesai paling lambat dibanding teman.</span>
+                            </button>
+                            <button onclick="selectSupportingEvidence('Dada terasa berdebar kencang & gugup saat dipanggil.')" class="preset-sup-btn p-2.5 bg-slate-50 hover:bg-rose-50/80 border border-slate-200 hover:border-rose-400 rounded-xl text-left transition flex items-start gap-2 text-xs font-bold text-slate-700">
+                                <span>😰</span> <span>Jantung berdetak kencang & terasa cemas.</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <p class="text-[11px] text-slate-500 font-semibold pt-1">Atau tulis / rekam bukti pendukungmu sendiri:</p>
+
+                    <div class="relative">
+                        <textarea id="inputBuktiMendukung" rows="3" placeholder="Contoh: Kadang aku masih terbata-bata saat membaca kalimat panjang..." class="w-full pr-10 p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold text-xs text-slate-800 focus:outline-none focus:border-amber-500"></textarea>
+                        <button onclick="startVoiceInput('inputBuktiMendukung')" class="absolute right-2 top-2 p-2 bg-rose-500 text-white rounded-lg text-xs" title="Bicara">
+                            <i class="fa-solid fa-microphone"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Column Contrary Evidence -->
+                <div class="bg-white p-5 rounded-3xl border border-slate-100 soft-shadow space-y-3">
+                    <div class="flex items-center justify-between border-b pb-2">
+                        <h4 class="font-extrabold text-emerald-700 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-thumbs-up"></i> Bukti Yang Menentang (Keberhasilan)
+                        </h4>
+                        <span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-md font-bold">Fakta Positif</span>
+                    </div>
+
+                    <!-- 4 Preset Buttons for Contrary Evidence -->
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-600 mb-1.5">Pilih 1 dari 4 Contoh Bukti Menentang:</label>
+                        <div class="grid grid-cols-1 gap-2">
+                            <button onclick="selectContraryEvidence('Pernah berhasil membaca beberapa kalimat dengan lancar dan dipuji.')" class="preset-con-btn p-2.5 bg-slate-50 hover:bg-emerald-50/80 border border-slate-200 hover:border-emerald-400 rounded-xl text-left transition flex items-start gap-2 text-xs font-bold text-slate-700">
+                                <span>🌟</span> <span>Pernah berhasil membaca lancar & dipuji.</span>
+                            </button>
+                            <button onclick="selectContraryEvidence('Guru dan teman mau membantu tanpa marah saat aku kesulitan.')" class="preset-con-btn p-2.5 bg-slate-50 hover:bg-emerald-50/80 border border-slate-200 hover:border-emerald-400 rounded-xl text-left transition flex items-start gap-2 text-xs font-bold text-slate-700">
+                                <span>🤝</span> <span>Guru & teman mau membantu dengan sabar.</span>
+                            </button>
+                            <button onclick="selectContraryEvidence('Walaupun pelan, aku tetap bisa menyelesaikan tugas dengan benar.')" class="preset-con-btn p-2.5 bg-slate-50 hover:bg-emerald-50/80 border border-slate-200 hover:border-emerald-400 rounded-xl text-left transition flex items-start gap-2 text-xs font-bold text-slate-700">
+                                <span>✅</span> <span>Walau pelan, tugas bisa selesai dengan baik.</span>
+                            </button>
+                            <button onclick="selectContraryEvidence('Rasa cemas dan gemetar berkurang setelah aku mulai mencoba.')" class="preset-con-btn p-2.5 bg-slate-50 hover:bg-emerald-50/80 border border-slate-200 hover:border-emerald-400 rounded-xl text-left transition flex items-start gap-2 text-xs font-bold text-slate-700">
+                                <span>😌</span> <span>Rasa cemas berkurang setelah mulai mencoba.</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <p class="text-[11px] text-slate-500 font-semibold pt-1">Atau tulis / rekam bukti penentangmu sendiri:</p>
+
+                    <div class="relative">
+                        <textarea id="inputBuktiMenentang" rows="3" placeholder="Contoh: Kemarin aku bisa membaca 3 baris dengan baik, dan guru memujiku..." class="w-full pr-10 p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold text-xs text-slate-800 focus:outline-none focus:border-emerald-500"></textarea>
+                        <button onclick="startVoiceInput('inputBuktiMenentang')" class="absolute right-2 top-2 p-2 bg-rose-500 text-white rounded-lg text-xs" title="Bicara">
+                            <i class="fa-solid fa-microphone"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Draft Coping Thought -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-100 soft-shadow space-y-4">
+                <h3 class="font-extrabold text-slate-800 text-base flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved text-indigo-600"></i> Kalimat Coping / Penenang Awal
+                </h3>
+
+                <div class="relative">
+                    <input type="text" id="inputCopingAwal" placeholder="Contoh: Aku belum lancar, tapi aku sedang berusaha dan terus belajar..." class="w-full pr-12 pl-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
+                    <button onclick="startVoiceInput('inputCopingAwal')" class="absolute right-2 top-2 p-2 bg-rose-500 text-white rounded-xl" title="Bicara">
+                        <i class="fa-solid fa-microphone"></i>
+                    </button>
+                </div>
+
+                <div class="flex justify-end pt-2">
+                    <button onclick="switchSession(5)" class="bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 rounded-2xl font-extrabold text-sm flex items-center gap-2 shadow-md transition">
+                        Lanjut ke Zona Hijau <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SESSION 5 ================= -->
+        <section id="session-5" class="session-page space-y-6 hidden">
+            <div class="bg-gradient-to-r from-emerald-50 to-teal-50 p-6 rounded-3xl border border-emerald-100 soft-shadow flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                    <span class="bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Sesi 5 • Zona Hijau</span>
+                    <h2 class="text-xl md:text-2xl font-extrabold text-slate-800 mt-2">Beralih ke Pikiran Seimbang & Re-Evaluasi</h2>
+                    <p class="text-sm text-slate-600 mt-1">Susun kalimat seimbang dan rasakan bagaimana perasaanmu berubah menjadi lebih lega!</p>
+                </div>
+                <button onclick="speakText('Selamat di Zona Hijau! Mari susun pikiran seimbang dan periksa kembali seberapa tenang perasaanmu sekarang.')" class="bg-emerald-600 hover:bg-emerald-700 text-white p-3 rounded-2xl flex items-center gap-2 font-bold text-sm shadow-md transition">
+                    <i class="fa-solid fa-volume-high text-lg"></i> Dengarkan Instruksi
+                </button>
+            </div>
+
+            <!-- Zona Hijau Thought Formulator -->
+            <div class="bg-white p-6 rounded-3xl border-2 border-emerald-200 soft-shadow space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-extrabold text-emerald-800 text-lg flex items-center gap-2">
+                        <i class="fa-solid fa-seedling text-emerald-600"></i> Pikiran Seimbang Baru (Zona Hijau)
+                    </h3>
+                    <button onclick="generateBalancedThoughtSuggestion()" class="text-xs bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-extrabold px-3 py-1.5 rounded-xl transition">
+                        💡 Rekomendasi Contoh
+                    </button>
+                </div>
+
+                <div class="relative">
+                    <textarea id="inputPikiranSeimbang" rows="3" placeholder="Contoh: Aku memang belum lancar membaca, tapi aku sudah bisa membaca beberapa kalimat. Guru dan teman siap membantuku..." class="w-full pr-12 p-4 bg-emerald-50/50 border border-emerald-200 rounded-2xl font-bold text-emerald-950 text-sm focus:outline-none focus:border-emerald-500"></textarea>
+                    <button onclick="startVoiceInput('inputPikiranSeimbang')" class="absolute right-3 top-3 p-3 bg-rose-500 hover:bg-rose-600 text-white rounded-xl shadow transition" title="Bicara">
+                        <i class="fa-solid fa-microphone text-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Re-Evaluation Sliders Comparison (Before vs After) -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-100 soft-shadow space-y-6">
+                <h3 class="font-extrabold text-slate-800 text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-indigo-600"></i> Penilaian Ulang (Perbandingan Sebelum & Sesudah)
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Belief Re-rating -->
+                    <div class="p-4 bg-slate-50 rounded-2xl space-y-3 border border-slate-200">
+                        <h4 class="font-extrabold text-xs text-slate-600 uppercase">1. Keyakinan pada Pikiran Buruk Awal</h4>
+                        <div class="flex justify-between text-xs font-bold">
+                            <span class="text-rose-600">Awal: <span id="reBeliefBefore">90%</span></span>
+                            <span class="text-emerald-600">Sekarang: <span id="reBeliefAfterVal">30%</span></span>
+                        </div>
+                        <input type="range" id="reBeliefSlider" min="0" max="100" value="30" oninput="document.getElementById('reBeliefAfterVal').innerText = this.value + '%'" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600">
+                    </div>
+
+                    <!-- Emotion Intensity Re-rating -->
+                    <div class="p-4 bg-slate-50 rounded-2xl space-y-3 border border-slate-200">
+                        <h4 class="font-extrabold text-xs text-slate-600 uppercase">2. Kekuatan Perasaan Negatif</h4>
+                        <div class="flex justify-between text-xs font-bold">
+                            <span class="text-rose-600">Awal: <span id="reEmoBefore">7/10</span></span>
+                            <span class="text-emerald-600">Sekarang: <span id="reEmoAfterVal">3/10</span></span>
+                        </div>
+                        <input type="range" id="reEmoSlider" min="0" max="10" value="3" oninput="document.getElementById('reEmoAfterVal').innerText = this.value + '/10'" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600">
+                    </div>
+                </div>
+
+                <!-- Interactive "Hentikan-Ganti" Roleplay simulator button -->
+                <div class="p-4 bg-indigo-50/70 rounded-2xl border border-indigo-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-lg">🛑</div>
+                        <div>
+                            <h4 class="font-extrabold text-slate-800 text-xs sm:text-sm">Simulasi Teknik "Hentikan - Ganti!"</h4>
+                            <p class="text-[11px] text-slate-600 font-semibold">Ucapkan: "Berhenti! Itu hanya monster pikiran. Aku pakai pikiran seimbangku!"</p>
+                        </div>
+                    </div>
+                    <button onclick="playStopAndSwitchAudio()" class="w-full sm:w-auto px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs rounded-xl shadow transition whitespace-nowrap">
+                        <i class="fa-solid fa-play mr-1"></i> Latihan Suara
+                    </button>
+                </div>
+
+                <div class="flex justify-end pt-2">
+                    <button onclick="switchSession(6)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-2xl font-extrabold text-sm flex items-center gap-2 shadow-md transition">
+                        Lanjut ke Rekapitulasi <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SESSION 6 ================= -->
+        <section id="session-6" class="session-page space-y-6 hidden">
+            <div class="bg-gradient-to-r from-purple-50 to-indigo-50 p-6 rounded-3xl border border-purple-100 soft-shadow flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                    <span class="bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Sesi 6 • Penutup & Tindak Lanjut</span>
+                    <h2 class="text-xl md:text-2xl font-extrabold text-slate-800 mt-2">Menerapkan & Menjaga Keterampilan</h2>
+                    <p class="text-sm text-slate-600 mt-1">Hebat! Kamu sudah belajar cara menguji pikiranmu sendiri. Ini rekap perkembanganmu!</p>
+                </div>
+                <button onclick="speakText('Selamat! Kamu telah menyelesaikan sesi restrukturisasi kognitif. Mari buat rencana Jika Maka untuk menghadapi hari-hari sekolah!')" class="bg-purple-600 hover:bg-purple-700 text-white p-3 rounded-2xl flex items-center gap-2 font-bold text-sm shadow-md transition">
+                    <i class="fa-solid fa-volume-high text-lg"></i> Dengar Ucapan Selamat
+                </button>
+            </div>
+
+            <!-- Visual Progress Chart -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-100 soft-shadow space-y-4">
+                <h3 class="font-extrabold text-slate-800 text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-chart-line text-purple-600"></i> Rekap Perubahan Keyakinan & Perasaan
+                </h3>
+                <div class="w-full h-56 max-h-64">
+                    <canvas id="progressChart"></canvas>
+                </div>
+            </div>
+
+            <!-- "Jika - Maka" Action Plan Builder -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-100 soft-shadow space-y-4">
+                <h3 class="font-extrabold text-slate-800 text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-compass text-indigo-600"></i> Rencana Konkret "Jika - Maka"
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-extrabold text-slate-600 mb-1">Jika (Situasi Sulit Datang):</label>
+                        <div class="relative">
+                            <input type="text" id="planJika" value="Jika diminta membaca di kelas" class="w-full pr-10 p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold text-xs">
+                            <button onclick="startVoiceInput('planJika')" class="absolute right-2 top-2 text-rose-500"><i class="fa-solid fa-microphone"></i></button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-extrabold text-slate-600 mb-1">Maka Aku Akan (Langkah Nyata):</label>
+                        <div class="relative">
+                            <input type="text" id="planMaka" value="Tarik napas dalam, dan ingat pikiran seimbangku bahwa aku boleh mencoba pelan-pelan" class="w-full pr-10 p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold text-xs">
+                            <button onclick="startVoiceInput('planMaka')" class="absolute right-2 top-2 text-rose-500"><i class="fa-solid fa-microphone"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Favorite Coping Badge Card -->
+            <div class="bg-gradient-to-br from-indigo-500 to-purple-600 text-white p-6 rounded-3xl soft-shadow space-y-4 relative overflow-hidden">
+                <div class="flex items-center justify-between relative z-10">
+                    <div>
+                        <span class="text-[10px] uppercase font-extrabold tracking-widest bg-white/20 px-2.5 py-1 rounded-full">Kartu Coping Favoritku</span>
+                        <h4 id="badgeThoughtDisplay" class="text-lg font-extrabold mt-2">"Aku masih belajar, dan itu tidak apa-apa!"</h4>
+                        <p id="badgeStudentDisplay" class="text-xs text-indigo-100 font-semibold mt-1">Pemilik: Siswa S1 • SMP Negeri 1 Kotaanyar</p>
+                    </div>
+                    <div class="text-4xl opacity-80">⭐</div>
+                </div>
+
+                <div class="pt-2 flex flex-wrap gap-2 relative z-10">
+                    <button onclick="saveRecordToJournal()" class="bg-white text-indigo-700 hover:bg-indigo-50 font-extrabold px-5 py-2.5 rounded-2xl text-xs shadow transition flex items-center gap-2">
+                        <i class="fa-solid fa-cloud-arrow-up text-indigo-600"></i> Simpan Ke Awan & Jurnal
+                    </button>
+                    <button onclick="switchSession('journal')" class="bg-emerald-500 hover:bg-emerald-400 text-white font-extrabold px-4 py-2.5 rounded-2xl text-xs shadow transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-book"></i> Lihat Halaman Jurnal
+                    </button>
+                    <button onclick="printStudentReport(currentStudent)" class="bg-amber-400 hover:bg-amber-300 text-amber-950 font-extrabold px-4 py-2.5 rounded-2xl text-xs shadow transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-print"></i> Cetak / PDF Laporan
+                    </button>
+                    <button onclick="speakInputText('planMaka')" class="bg-indigo-700/60 hover:bg-indigo-700 text-white font-extrabold px-4 py-2.5 rounded-2xl text-xs transition flex items-center gap-1">
+                        <i class="fa-solid fa-volume-high"></i> Play Suara
+                    </button>
+                </div>
+            </div>
+
+            <!-- Navigation Action Buttons (Bottom of Session 6) -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-100 soft-shadow flex flex-col sm:flex-row items-center justify-between gap-3">
+                <button onclick="switchSession('welcome')" class="w-full sm:w-auto bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold px-5 py-3 rounded-2xl text-xs sm:text-sm transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-house text-indigo-600"></i> 🏠 Kembali ke Beranda
+                </button>
+                
+                <div class="flex flex-col sm:flex-row items-center gap-2.5 w-full sm:w-auto">
+                    <button onclick="switchSession(1)" class="w-full sm:w-auto bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-extrabold px-5 py-3 rounded-2xl text-xs sm:text-sm transition flex items-center justify-center gap-2 border border-indigo-200">
+                        <i class="fa-solid fa-rotate-left"></i> 🔄 Ulangi Dari Sesi 1
+                    </button>
+                    <button onclick="switchSession('journal')" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-6 py-3 rounded-2xl text-xs sm:text-sm shadow-md transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-book-bookmark"></i> 📖 Buka Halaman Jurnal <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SAVED JOURNAL SECTION ================= -->
+        <section id="session-journal" class="session-page space-y-6 hidden">
+            <div class="bg-gradient-to-r from-emerald-50 to-teal-50 p-6 rounded-3xl border border-emerald-100 soft-shadow flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div>
+                    <h2 class="text-xl md:text-2xl font-extrabold text-slate-800">Catatan Jurnal & Rekapitulasi Siswa</h2>
+                    <p class="text-sm text-slate-600 mt-1">Tersimpan otomatis secara online di Penyimpanan Awan & Perangkat Lokal.</p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="printStudentReport(currentStudent)" class="text-xs bg-amber-500 hover:bg-amber-600 text-white font-extrabold px-3.5 py-2 rounded-xl shadow flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-print"></i> Cetak PDF Laporan (${currentStudent})
+                    </button>
+                    <button onclick="exportBackupJSON()" class="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 py-2 rounded-xl shadow flex items-center gap-1 transition">
+                        <i class="fa-solid fa-download"></i> Unduh File Backup
+                    </button>
+                    <button onclick="clearJournalData()" class="text-xs bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold px-3 py-2 rounded-xl transition">
+                        <i class="fa-solid fa-trash"></i> Hapus Local
+                    </button>
+                </div>
+            </div>
+
+            <div id="journalContainer" class="space-y-4">
+                <!-- Dynamic Journal Cards injected via JS -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- HELP MODAL -->
+    <div id="helpModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 soft-shadow">
+            <div class="flex items-center justify-between border-b pb-3">
+                <h3 class="font-extrabold text-slate-800 text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-circle-info text-indigo-600"></i> Panduan Penggunaan Media
+                </h3>
+                <button onclick="closeHelpModal()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="text-xs text-slate-600 font-semibold space-y-2 leading-relaxed">
+                <p><strong>1. Fitur Suara Ke Teks (Microphone):</strong> Tekan tombol mikrofon merah di samping kolom input untuk langsung berbicara tanpa perlu mengetik.</p>
+                <p><strong>2. Fitur Teks Ke Suara (Audio Speaker):</strong> Tekan ikon speaker untuk mendengarkan bacaan instruksi atau teks pilihan secara otomatis.</p>
+                <p><strong>3. Kerahasiaan & Keamanan:</strong> Semua isian pada aplikasi ini disimpan secara aman dan digunakan untuk kegiatan konseling kelompok restrukturisasi kognitif.</p>
+            </div>
+            <div class="flex justify-end pt-2">
+                <button onclick="closeHelpModal()" class="bg-indigo-600 text-white font-bold px-5 py-2 rounded-xl text-xs">Saya Mengerti</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-800 text-white px-5 py-3 rounded-2xl text-xs font-bold shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-2">
+        <i class="fa-solid fa-bell text-amber-400"></i> <span id="toastMsg">Notifikasi</span>
+    </div>
+
+    <!-- FIREBASE CLOUD STORAGE INTEGRATION -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'thought-record-smp';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+
+        let db = null;
+        let auth = null;
+
+        if (firebaseConfig) {
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                async function authenticateCloud() {
+                    try {
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                            await signInWithCustomToken(auth, __initial_auth_token);
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+                        setupCloudSyncListener();
+                    } catch (e) {
+                        console.error("Cloud Auth error:", e);
+                    }
+                }
+                authenticateCloud();
+            } catch(e) {
+                console.warn("Firebase Init bypassed:", e);
+            }
+        }
+
+        function setupCloudSyncListener() {
+            if (!db || !auth.currentUser) return;
+            const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'thought_records');
+            onSnapshot(colRef, (snapshot) => {
+                const cloudEntries = [];
+                snapshot.forEach((docSnap) => {
+                    cloudEntries.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                window.cloudJournalData = cloudEntries;
+                if (typeof window.renderJournal === 'function') {
+                    window.renderJournal();
+                }
+                if (typeof window.updateCloudStatusBadge === 'function') {
+                    window.updateCloudStatusBadge(true, cloudEntries.length);
+                }
+            }, (err) => {
+                console.warn("Cloud Snapshot listener error:", err);
+            });
+        }
+
+        window.saveRecordToCloudDB = async function(recordData) {
+            if (!db || !auth.currentUser) return false;
+            try {
+                const docId = `record_${recordData.student}_${Date.now()}`;
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'thought_records', docId);
+                await setDoc(docRef, recordData);
+                return true;
+            } catch(err) {
+                console.error("Cloud save failed:", err);
+                return false;
+            }
+        };
+    </script>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // GLOBAL STATE STORE
+        let currentStudent = 'S1';
+        let activeSessionKey = 'welcome';
+        let audioSpeed = 1.0;
+        let chartInstance = null;
+        window.cloudJournalData = [];
+
+        // Current Session Input State
+        let currentData = {
+            situasi: 'Diminta membaca di depan kelas',
+            emosi: 'Cemas/Gugup',
+            emosiSkala: 7,
+            pikiranAwal: 'Tulisanku jelek dan aku pasti salah membaca...',
+            monster: 'Si Pelabel',
+            keyakinanAwal: 90,
+            buktiMendukung: 'Kadang masih terbata-bata',
+            buktiMenentang: 'Pernah bisa membaca 3 baris dengan lancar',
+            copingAwal: 'Aku masih dalam proses belajar',
+            pikiranSeimbang: 'Aku belum lancar membaca, tapi dengan latihan pelan-pelan aku bisa lebih baik.',
+            keyakinanAkhir: 30,
+            emosiAkhir: 3,
+            planJika: 'Jika diminta membaca di kelas',
+            planMaka: 'Tarik napas dalam, dan ingat bahwa aku boleh membaca pelan-pelan'
+        };
+
+        // DRAG AND DROP CARD GAME STATE
+        const dragCardsOriginal = [
+            { id: 'c1', text: "Diminta membaca di depan kelas", category: "situasi", hint: "Ini adalah peristiwa/kejadian dari luar." },
+            { id: 'c2', text: "Aku pasti salah dan ditertawakan", category: "pikiran", hint: "Ini adalah dugaan/perkataan dalam pikiran." },
+            { id: 'c3', text: "Dada terasa sesak & malu (8/10)", category: "perasaan", hint: "Ini adalah emosi dan reaksi dalam tubuh." },
+            { id: 'c4', text: "Menundukkan kepala & menolak maju", category: "perilaku", hint: "Ini adalah perbuatan/tindakan yang terlihat." }
+        ];
+
+        let draggedCardId = null;
+        let selectedCardId = null; // for tap/touch selection
+        let placedCards = {
+            situasi: null,
+            pikiran: null,
+            perasaan: null,
+            perilaku: null
+        };
+
+        // SESSION NAVIGATION FUNCTION
+        function switchSession(sessionKey) {
+            activeSessionKey = sessionKey;
+            
+            // Hide all session pages
+            document.querySelectorAll('.session-page').forEach(el => el.classList.add('hidden'));
+            
+            // Show target session page
+            const target = document.getElementById(`session-${sessionKey}`);
+            if (target) {
+                target.classList.remove('hidden');
+            }
+            
+            // Update active tab styles
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('bg-indigo-600', 'text-white');
+                tab.classList.add('hover:bg-indigo-900', 'text-indigo-200');
+            });
+            
+            const activeNav = document.getElementById(`nav-sesi-${sessionKey}`);
+            if (activeNav) {
+                activeNav.classList.remove('hover:bg-indigo-900', 'text-indigo-200');
+                activeNav.classList.add('bg-indigo-600', 'text-white');
+            }
+            
+            // Specific actions on session load
+            if (sessionKey === 6) {
+                setTimeout(initChart, 150);
+            } else if (sessionKey === 'journal') {
+                renderJournal();
+            }
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // PROFILE & SETTINGS FUNCTIONS
+        function changeStudentProfile() {
+            const sel = document.getElementById('studentSelect');
+            if (sel) {
+                currentStudent = sel.value;
+                loadStudentData(currentStudent);
+                showToast(`Profil diganti ke ${currentStudent}`);
+            }
+        }
+
+        function toggleAudioSpeed() {
+            if (audioSpeed === 1.0) audioSpeed = 0.8;
+            else if (audioSpeed === 0.8) audioSpeed = 1.2;
+            else audioSpeed = 1.0;
+            
+            const label = document.getElementById('speedLabel');
+            if (label) label.innerText = `${audioSpeed.toFixed(1)}x`;
+            showToast(`Kecepatan suara: ${audioSpeed.toFixed(1)}x`);
+        }
+
+        function openHelpModal() {
+            const modal = document.getElementById('helpModal');
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeHelpModal() {
+            const modal = document.getElementById('helpModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        // AUDIO (TEXT-TO-SPEECH & SPEECH-TO-TEXT) FUNCTIONS
+        function speakText(text) {
+            if (!('speechSynthesis' in window)) {
+                showToast("Fitur audio tidak didukung di browser ini.");
+                return;
+            }
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'id-ID';
+            utterance.rate = audioSpeed;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function speakInputText(inputId) {
+            const el = document.getElementById(inputId);
+            if (el && el.value.trim() !== '') {
+                speakText(el.value);
+            } else {
+                showToast("Kolom teks masih kosong.");
+            }
+        }
+
+        function startVoiceInput(inputId) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                showToast("Fitur rekaman suara tidak didukung browser ini. Silakan ketik secara manual.");
+                return;
+            }
+            
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'id-ID';
+            recognition.interimResults = false;
+            
+            showToast("🎙️ Mendengarkan... Silakan bicara sekarang!");
+            
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                const target = document.getElementById(inputId);
+                if (target) {
+                    target.value = transcript;
+                    showToast("Suara berhasil diubah ke teks!");
+                    speakText(`Tercatat: ${transcript}`);
+                }
+            };
+            
+            recognition.onerror = () => {
+                showToast("Gagal merekam suara. Silakan coba lagi.");
+            };
+            
+            recognition.start();
+        }
+
+        // SESSION 2 HANDLERS
+        function selectPresetSituation(sitText) {
+            const input = document.getElementById('inputSituasi');
+            if (input) input.value = sitText;
+            currentData.situasi = sitText;
+            speakText(`Situasi dipilih: ${sitText}`);
+            showToast(`Situasi terpilih: "${sitText}"`);
+        }
+
+        function selectEmotion(emoName, emoji) {
+            currentData.emosi = emoName;
+            speakText(`Perasaan terpilih: ${emoName}`);
+            showToast(`Perasaan terpilih: ${emoji} ${emoName}`);
+        }
+
+        function updateEmotionValue(val) {
+            currentData.emosiSkala = parseInt(val);
+            const disp = document.getElementById('emoValueDisplay');
+            if (disp) disp.innerText = `Skala: ${val} / 10`;
+            const reDisp = document.getElementById('reEmoBefore');
+            if (reDisp) reDisp.innerText = `${val}/10`;
+        }
+
+        function selectPresetThought(thoughtText) {
+            const input = document.getElementById('inputPikiranAwal');
+            if (input) input.value = thoughtText;
+            currentData.pikiranAwal = thoughtText;
+            speakText(thoughtText);
+            showToast("Pikiran otomatis dipilih.");
+        }
+
+        // SESSION 3 HANDLERS
+        function selectMonster(name, desc) {
+            currentData.monster = name;
+            const disp = document.getElementById('selectedMonsterDisplay');
+            const badge = document.getElementById('monsterBadgeIcon');
+            if (disp) disp.innerText = name;
+            
+            const icons = {
+                'Si Pelabel': '🏷️',
+                'Si Pukul Rata': '🧹',
+                'Peramal Bencana': '💥',
+                'Pembaca Pikiran': '🔮'
+            };
+            if (badge) badge.innerText = icons[name] || '👾';
+            
+            showToast(`Monster terpilih: ${name}`);
+        }
+
+        function updateBeliefValue(val) {
+            currentData.keyakinanAwal = parseInt(val);
+            const disp = document.getElementById('beliefValueDisplay');
+            if (disp) {
+                let label = "Keraguan";
+                if (val > 70) label = "Sangat Yakin";
+                else if (val > 40) label = "Cukup Yakin";
+                disp.innerText = `${val}% (${label})`;
+            }
+            const reDisp = document.getElementById('reBeliefBefore');
+            if (reDisp) reDisp.innerText = `${val}%`;
+        }
+
+        // SESSION 4 HANDLERS
+        function selectDetectivePreset(num) {
+            const presets = {
+                1: {
+                    title: "Membaca di Depan Kelas",
+                    sup: "Pernah terbata-bata saat membaca kalimat panjang di depan kelas.",
+                    con: "Pernah membaca 3 baris dengan lancar dan diberi tepuk tangan oleh guru.",
+                    coping: "Aku belum terlalu lancar, tapi aku berani mencoba dan belajar pelan-pelan."
+                },
+                2: {
+                    title: "Menulis di Papan Tulis",
+                    sup: "Pernah ada salah eja huruf saat menulis di papan tulis.",
+                    con: "Teman dan guru membantu membenarkan ejaan tanpa mengejekku.",
+                    coping: "Tidak apa-apa salah eja, aku bisa memperbaikinya dan makin paham."
+                },
+                3: {
+                    title: "Mengerjakan Kuis atau Ujian",
+                    sup: "Pernah selesai mengerjakan kuis paling akhir dibanding teman lain.",
+                    con: "Hasil nilai kuisku tetap bagus walaupun butuh waktu lebih lama.",
+                    coping: "Kecepatan tiap orang berbeda. Yang penting aku paham dan selesai."
+                },
+                4: {
+                    title: "Menjawab Pertanyaan Guru",
+                    sup: "Pernah terdiam beberapa detik sebelum menjawab pertanyaan guru.",
+                    con: "Guru tetap menunggu dengan sabar dan memuji jawabanku yang benar.",
+                    coping: "Mengambil waktu berpikir adalah hal yang wajar dan baik."
+                }
+            };
+            
+            const p = presets[num];
+            if (p) {
+                document.getElementById('inputBuktiMendukung').value = p.sup;
+                document.getElementById('inputBuktiMenentang').value = p.con;
+                document.getElementById('inputCopingAwal').value = p.coping;
+                currentData.buktiMendukung = p.sup;
+                currentData.buktiMenentang = p.con;
+                currentData.copingAwal = p.coping;
+
+                // Pembacaan audio lengkap: Judul Situasi, Bukti Mendukung, dan Bukti Menentang
+                const textToSpeak = `Situasi ${num}: ${p.title}. Bukti mendukung: ${p.sup}. Bukti menentang: ${p.con}`;
+                speakText(textToSpeak);
+                showToast(`Situasi ${num} dimuat & dibacakan!`);
+            }
+        }
+
+        function selectSupportingEvidence(text) {
+            const input = document.getElementById('inputBuktiMendukung');
+            if (input) input.value = text;
+            currentData.buktiMendukung = text;
+            speakText(text);
+            showToast("Bukti mendukung dipilih.");
+        }
+
+        function selectContraryEvidence(text) {
+            const input = document.getElementById('inputBuktiMenentang');
+            if (input) input.value = text;
+            currentData.buktiMenentang = text;
+            speakText(text);
+            showToast("Bukti penentang dipilih.");
+        }
+
+        // SESSION 5 HANDLERS
+        function generateBalancedThoughtSuggestion() {
+            const sug = "Aku memang belum lancar membaca/menulis, tetapi aku sudah bisa menyelesaikan tugas dengan latihan. Teman dan guru siap membantuku.";
+            const input = document.getElementById('inputPikiranSeimbang');
+            if (input) input.value = sug;
+            currentData.pikiranSeimbang = sug;
+            speakText(sug);
+            showToast("Rekomendasi pikiran seimbang dimuat!");
+        }
+
+        function playStopAndSwitchAudio() {
+            const msg = "Berhenti! Itu hanya monster pikiran. Aku memilih pikiran seimbangku: Saya boleh belajar pelan-pelan!";
+            speakText(msg);
+            showToast("🛑 Simulasi Teknik Hentikan-Ganti Berjalan!");
+        }
+
+        // SESSION 6 & CHART HANDLERS
+        function initChart() {
+            const ctx = document.getElementById('progressChart');
+            if (!ctx) return;
+            
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+            
+            const bAwal = currentData.keyakinanAwal || 90;
+            const bAkhir = parseInt(document.getElementById('reBeliefSlider')?.value || 30);
+            const eAwal = (currentData.emosiSkala || 7) * 10;
+            const eAkhir = parseInt(document.getElementById('reEmoSlider')?.value || 3) * 10;
+
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Keyakinan Pikiran Buruk (%)', 'Intensitas Emosi Negatif (%)'],
+                    datasets: [
+                        {
+                            label: 'Sebelum Intervensi (Awal)',
+                            data: [bAwal, eAwal],
+                            backgroundColor: 'rgba(244, 63, 94, 0.7)',
+                            borderColor: 'rgba(244, 63, 94, 1)',
+                            borderWidth: 2,
+                            borderRadius: 12
+                        },
+                        {
+                            label: 'Setelah Restrukturisasi (Zona Hijau)',
+                            data: [bAkhir, eAkhir],
+                            backgroundColor: 'rgba(16, 185, 129, 0.7)',
+                            borderColor: 'rgba(16, 185, 129, 1)',
+                            borderWidth: 2,
+                            borderRadius: 12
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        // JOURNAL & STORAGE HANDLERS
+        async function saveRecordToJournal() {
+            const journalKey = `journal_${currentStudent}`;
+            let saved = JSON.parse(localStorage.getItem(journalKey) || '[]');
+            
+            const newEntry = {
+                id: Date.now(),
+                date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+                student: currentStudent,
+                situasi: document.getElementById('inputSituasi')?.value || currentData.situasi,
+                emosi: currentData.emosi,
+                emosiSkala: currentData.emosiSkala,
+                pikiranAwal: document.getElementById('inputPikiranAwal')?.value || currentData.pikiranAwal,
+                monster: currentData.monster,
+                buktiMendukung: document.getElementById('inputBuktiMendukung')?.value || currentData.buktiMendukung,
+                buktiMenentang: document.getElementById('inputBuktiMenentang')?.value || currentData.buktiMenentang,
+                pikiranSeimbang: document.getElementById('inputPikiranSeimbang')?.value || currentData.pikiranSeimbang,
+                keyakinanAwal: currentData.keyakinanAwal,
+                keyakinanAkhir: parseInt(document.getElementById('reBeliefSlider')?.value || 30),
+                emosiAkhir: parseInt(document.getElementById('reEmoSlider')?.value || 3),
+                planJika: document.getElementById('planJika')?.value || currentData.planJika,
+                planMaka: document.getElementById('planMaka')?.value || currentData.planMaka
+            };
+            
+            // Save Local
+            saved.unshift(newEntry);
+            localStorage.setItem(journalKey, JSON.stringify(saved));
+            
+            // Save Cloud
+            let cloudSaved = false;
+            if (typeof window.saveRecordToCloudDB === 'function') {
+                cloudSaved = await window.saveRecordToCloudDB(newEntry);
+            }
+
+            if (cloudSaved) {
+                showToast(`☁️ Berhasil disimpan ke Penyimpanan Awan & Jurnal ${currentStudent}!`);
+            } else {
+                showToast(`✅ Berhasil disimpan di Jurnal ${currentStudent}!`);
+            }
+
+            renderJournal();
+        }
+
+        function updateCloudStatusBadge(isOnline, count = 0) {
+            const badge = document.getElementById('cloudStatusBadge');
+            const text = document.getElementById('cloudStatusText');
+            if (badge && text) {
+                badge.classList.remove('hidden');
+                text.innerText = `Awan Terhubung (${count} File)`;
+            }
+        }
+
+        function renderJournal() {
+            const container = document.getElementById('journalContainer');
+            if (!container) return;
+            
+            const journalKey = `journal_${currentStudent}`;
+            let localSaved = JSON.parse(localStorage.getItem(journalKey) || '[]');
+            
+            // Combine with Cloud Data if available
+            let cloudSaved = (window.cloudJournalData || []).filter(e => e.student === currentStudent);
+            
+            // Merge & Deduplicate
+            const combinedMap = new Map();
+            localSaved.forEach(item => combinedMap.set(item.id || item.date, item));
+            cloudSaved.forEach(item => combinedMap.set(item.id || item.date, item));
+            
+            const mergedList = Array.from(combinedMap.values()).sort((a,b) => (b.id || 0) - (a.id || 0));
+
+            if (mergedList.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white p-8 rounded-3xl text-center border border-slate-100 font-bold text-slate-500">
+                        <i class="fa-solid fa-folder-open text-4xl text-slate-300 mb-2"></i>
+                        <p>Belum ada jurnal tersimpan untuk ${currentStudent}.</p>
+                        <p class="text-xs font-semibold text-slate-400 mt-1">Selesaikan Sesi 6 lalu tekan "Simpan Ke Awan & Jurnal".</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = mergedList.map(entry => `
+                <div class="bg-white p-5 rounded-3xl border border-slate-100 soft-shadow space-y-3">
+                    <div class="flex items-center justify-between border-b pb-2">
+                        <span class="text-xs font-extrabold text-indigo-600">${entry.student} • ${entry.date}</span>
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-xs bg-emerald-100 text-emerald-800 font-extrabold px-2.5 py-0.5 rounded-full">Monster: ${entry.monster || 'Si Pelabel'}</span>
+                            <button onclick="printSingleEntry('${entry.id}')" class="text-xs bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold px-2 py-0.5 rounded-lg" title="Cetak Entry Ini">
+                                🖨️ Cetak
+                            </button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-bold text-slate-700">
+                        <div class="bg-slate-50 p-3 rounded-2xl">
+                            <span class="text-slate-400 block text-[10px] uppercase">Situasi & Perasaan:</span>
+                            <p class="text-slate-800">${entry.situasi} (${entry.emosi} ${entry.emosiSkala}/10)</p>
+                        </div>
+                        <div class="bg-rose-50 p-3 rounded-2xl">
+                            <span class="text-rose-500 block text-[10px] uppercase">Pikiran Buruk (Awal):</span>
+                            <p class="text-rose-950">${entry.pikiranAwal}</p>
+                            <span class="text-[10px] text-rose-600 block mt-1">Keyakinan Awal: ${entry.keyakinanAwal || 90}%</span>
+                        </div>
+                        <div class="bg-emerald-50 p-3 rounded-2xl sm:col-span-2">
+                            <span class="text-emerald-600 block text-[10px] uppercase">Pikiran Seimbang (Zona Hijau):</span>
+                            <p class="text-emerald-950">${entry.pikiranSeimbang}</p>
+                            <span class="text-[10px] text-emerald-700 block mt-1">Keyakinan Akhir: ${entry.keyakinanAkhir || 30}% • Perasaan Akhir: ${entry.emosiAkhir || 3}/10</span>
+                        </div>
+                        <div class="bg-indigo-50 p-3 rounded-2xl sm:col-span-2">
+                            <span class="text-indigo-600 block text-[10px] uppercase">Rencana "Jika - Maka":</span>
+                            <p class="text-indigo-950">"<strong>${entry.planJika}</strong>, maka aku akan <strong>${entry.planMaka}</strong>."</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // PRINT & BACKUP PDF EXPORT FUNCTIONS
+        function generatePrintChartSVG(records) {
+            const width = 650;
+            const height = 240;
+            const padding = { top: 52, right: 30, bottom: 45, left: 50 };
+            const graphWidth = width - padding.left - padding.right;
+            const graphHeight = height - padding.top - padding.bottom;
+            
+            const sorted = [...records].reverse();
+            const count = sorted.length;
+            
+            let barsHtml = '';
+            const groupWidth = graphWidth / Math.max(count, 1);
+            const barW = Math.min(22, Math.max(10, groupWidth / 3.5));
+
+            let gridHtml = '';
+            [0, 25, 50, 75, 100].forEach(val => {
+                const y = padding.top + graphHeight - (val / 100) * graphHeight;
+                gridHtml += `
+                    <line x1="${padding.left}" y1="${y}" x2="${width - padding.right}" y2="${y}" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="3,3" />
+                    <text x="${padding.left - 8}" y="${y + 3}" font-size="9" font-family="sans-serif" fill="#64748b" text-anchor="end">${val}%</text>
+                `;
+            });
+
+            sorted.forEach((r, idx) => {
+                const groupX = padding.left + idx * groupWidth + groupWidth / 2;
+                const bAwal = r.keyakinanAwal || 90;
+                const bAkhir = r.keyakinanAkhir !== undefined ? r.keyakinanAkhir : 30;
+                
+                const hAwal = (bAwal / 100) * graphHeight;
+                const hAkhir = (bAkhir / 100) * graphHeight;
+                
+                const yAwal = padding.top + graphHeight - hAwal;
+                const yAkhir = padding.top + graphHeight - hAkhir;
+                
+                const xAwal = groupX - barW - 2;
+                const xAkhir = groupX + 2;
+
+                barsHtml += `
+                    <!-- Bar Keyakinan Awal -->
+                    <rect x="${xAwal}" y="${yAwal}" width="${barW}" height="${hAwal}" fill="#f43f5e" rx="3" />
+                    <text x="${xAwal + barW/2}" y="${yAwal - 4}" font-size="8.5" font-weight="bold" font-family="sans-serif" fill="#e11d48" text-anchor="middle">${bAwal}%</text>
+
+                    <!-- Bar Keyakinan Akhir -->
+                    <rect x="${xAkhir}" y="${yAkhir}" width="${barW}" height="${hAkhir}" fill="#10b981" rx="3" />
+                    <text x="${xAkhir + barW/2}" y="${yAkhir - 4}" font-size="8.5" font-weight="bold" font-family="sans-serif" fill="#047857" text-anchor="middle">${bAkhir}%</text>
+
+                    <!-- Label X -->
+                    <text x="${groupX}" y="${height - 15}" font-size="9" font-weight="bold" font-family="sans-serif" fill="#334155" text-anchor="middle">Sesi #${idx + 1}</text>
+                `;
+            });
+
+            return `
+                <div style="margin: 15px 0; text-align: center;">
+                    <svg viewBox="0 0 ${width} ${height}" style="width: 100%; max-width: 650px; height: auto; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; font-family: 'Segoe UI', sans-serif;">
+                        <!-- Title -->
+                        <text x="${width/2}" y="18" font-size="11" font-weight="bold" fill="#1e1b4b" text-anchor="middle">DIAGRAM PERUBAHAN KEYAKINAN PIKIRAN BURUK (SEBELUM VS SESUDAH)</text>
+                        
+                        <!-- Legend Group (Centered below Title with clean spacing) -->
+                        <g transform="translate(${width/2 - 125}, 26)">
+                            <rect x="0" y="0" width="10" height="10" fill="#f43f5e" rx="2" />
+                            <text x="14" y="8.5" font-size="9" font-weight="600" fill="#475569">Awal (Merugikan)</text>
+                            
+                            <rect x="130" y="0" width="10" height="10" fill="#10b981" rx="2" />
+                            <text x="144" y="8.5" font-size="9" font-weight="600" fill="#475569">Akhir (Seimbang)</text>
+                        </g>
+
+                        <!-- Grid -->
+                        ${gridHtml}
+                        <line x1="${padding.left}" y1="${padding.top + graphHeight}" x2="${width - padding.right}" y2="${padding.top + graphHeight}" stroke="#94a3b8" stroke-width="1.5" />
+                        
+                        <!-- Bars -->
+                        ${barsHtml}
+                    </svg>
+                </div>
+            `;
+        }
+
+        function printSingleEntry(entryId) {
+            const journalKey = `journal_${currentStudent}`;
+            let localSaved = JSON.parse(localStorage.getItem(journalKey) || '[]');
+            let cloudSaved = (window.cloudJournalData || []).filter(e => e.student === currentStudent);
+            
+            const combinedMap = new Map();
+            localSaved.forEach(item => combinedMap.set(item.id || item.date, item));
+            cloudSaved.forEach(item => combinedMap.set(item.id || item.date, item));
+            
+            const entry = combinedMap.get(entryId) || combinedMap.get(Number(entryId));
+            if (!entry) {
+                showToast("Catatan tidak ditemukan.");
+                return;
+            }
+            
+            printStudentReport(currentStudent, [entry]);
+        }
+
+        function printStudentReport(studentId, specificEntries = null) {
+            const journalKey = `journal_${studentId}`;
+            let localSaved = JSON.parse(localStorage.getItem(journalKey) || '[]');
+            let cloudSaved = (window.cloudJournalData || []).filter(e => e.student === studentId);
+            
+            const combinedMap = new Map();
+            localSaved.forEach(item => combinedMap.set(item.id || item.date, item));
+            cloudSaved.forEach(item => combinedMap.set(item.id || item.date, item));
+            
+            let records = specificEntries || Array.from(combinedMap.values()).sort((a,b) => (b.id || 0) - (a.id || 0));
+
+            if (records.length === 0) {
+                showToast(`Belum ada data jurnal untuk ${studentId} untuk dicetak.`);
+                return;
+            }
+
+            const chartSvg = generatePrintChartSVG(records);
+
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html lang="id">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Laporan Digital Thought Record - ${studentId}</title>
+                    <style>
+                        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 25px; color: #1e293b; background: #fff; line-height: 1.5; }
+                        .header { border-bottom: 3px double #4338ca; padding-bottom: 12px; margin-bottom: 20px; text-align: center; }
+                        .header h2 { margin: 0; font-size: 20px; color: #312e81; text-transform: uppercase; letter-spacing: 0.5px; }
+                        .header h3 { margin: 4px 0 0 0; font-size: 14px; color: #475569; font-weight: 600; }
+                        .header p { margin: 2px 0 0 0; font-size: 11px; color: #64748b; }
+                        .meta-info { display: flex; justify-content: space-between; background: #f8fafc; padding: 10px 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px; font-size: 12px; font-weight: bold; }
+                        .card { border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; margin-bottom: 16px; page-break-inside: avoid; background: #fafafa; }
+                        .card-header { display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; margin-bottom: 10px; font-size: 12px; font-weight: bold; color: #4338ca; }
+                        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 11px; }
+                        .full-width { grid-column: span 2; }
+                        .box { padding: 8px 10px; border-radius: 6px; border: 1px solid #e2e8f0; background: #ffffff; }
+                        .box-title { font-size: 9px; text-transform: uppercase; font-weight: 800; color: #64748b; margin-bottom: 3px; display: block; }
+                        .footer { margin-top: 30px; text-align: right; font-size: 12px; font-weight: bold; }
+                        .signature-space { height: 50px; }
+                        @media print {
+                            body { padding: 0; }
+                            button { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h2>SMP NEGERI 1 KOTAANYAR</h2>
+                        <h3>LAPORAN INTERVENSI KONSELING KELOMPOK RESTRUKTURISASI KOGNITIF</h3>
+                        <p>MEDIA DIGITAL THOUGHT RECORD • TAHUN 2026</p>
+                    </div>
+
+                    <div class="meta-info">
+                        <span>Kode Siswa: <strong>${studentId}</strong></span>
+                        <span>Jumlah Sesi Terdaftar: <strong>${records.length} Sesi</strong></span>
+                        <span>Konselor: <strong>Nur Kistin Kamalia, S.Psi.</strong></span>
+                    </div>
+
+                    ${chartSvg}
+
+                    <h4 style="margin: 15px 0 10px 0; font-size: 14px; color: #1e1b4b; border-bottom: 2px solid #e2e8f0; padding-bottom: 4px;">Rincian Catatan Sesi Konseling:</h4>
+
+                    ${records.map((r, i) => `
+                        <div class="card">
+                            <div class="card-header">
+                                <span>Sesi / Tanggal: ${r.date}</span>
+                                <span>Monster: ${r.monster || 'Si Pelabel'}</span>
+                            </div>
+                            <div class="grid">
+                                <div class="box">
+                                    <span class="box-title">Situasi Pemicu & Perasaan</span>
+                                    <strong>${r.situasi}</strong>
+                                    <div style="margin-top: 4px; color: #e11d48;">Perasaan: ${r.emosi} (${r.emosiSkala}/10)</div>
+                                </div>
+                                <div class="box" style="background: #fff1f2;">
+                                    <span class="box-title" style="color: #e11d48;">Pikiran Buruk Otomatis (Zona Merah)</span>
+                                    <strong>"${r.pikiranAwal}"</strong>
+                                    <div style="margin-top: 4px; color: #9f1239;">Tingkat Keyakinan Awal: ${r.keyakinanAwal || 90}%</div>
+                                </div>
+                                <div class="box full-width" style="background: #ecfdf5;">
+                                    <span class="box-title" style="color: #047857;">Pikiran Seimbang Baru (Zona Hijau)</span>
+                                    <strong>"${r.pikiranSeimbang}"</strong>
+                                    <div style="margin-top: 4px; color: #065f46;">Keyakinan Akhir: ${r.keyakinanAkhir !== undefined ? r.keyakinanAkhir : 30}% • Perasaan Akhir: ${r.emosiAkhir !== undefined ? r.emosiAkhir : 3}/10</div>
+                                </div>
+                                <div class="box full-width" style="background: #f0fdf4;">
+                                    <span class="box-title" style="color: #15803d;">Bukti Mendukung vs Menentang</span>
+                                    <div><strong>Mendukung:</strong> ${r.buktiMendukung || '-'}</div>
+                                    <div><strong>Menentang:</strong> ${r.buktiMenentang || '-'}</div>
+                                </div>
+                                <div class="box full-width" style="background: #eef2ff;">
+                                    <span class="box-title" style="color: #4338ca;">Rencana Penerapan "Jika - Maka"</span>
+                                    <strong>"Jika ${r.planJika || '-'}, maka aku akan ${r.planMaka || '-'}."</strong>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+
+                    <div class="footer">
+                        <p>Kotaanyar, ${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                        <p>Konselor Sekolah / Peneliti,</p>
+                        <div class="signature-space"></div>
+                        <p><u><strong>Nur Kistin Kamalia, S.Psi.</strong></u></p>
+                    </div>
+
+                    <script>
+                        window.onload = function() {
+                            setTimeout(function() { window.print(); }, 500);
+                        };
+                    <\/script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        }
+
+        function exportBackupJSON() {
+            const journalKey = `journal_${currentStudent}`;
+            let localSaved = JSON.parse(localStorage.getItem(journalKey) || '[]');
+            let cloudSaved = (window.cloudJournalData || []).filter(e => e.student === currentStudent);
+            const combinedMap = new Map();
+            localSaved.forEach(item => combinedMap.set(item.id || item.date, item));
+            cloudSaved.forEach(item => combinedMap.set(item.id || item.date, item));
+            const mergedList = Array.from(combinedMap.values());
+            
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(mergedList, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `backup_thought_record_${currentStudent}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showToast(`File backup JSON untuk ${currentStudent} berhasil diunduh!`);
+        }
+
+        function clearJournalData() {
+            const journalKey = `journal_${currentStudent}`;
+            localStorage.removeItem(journalKey);
+            showToast(`Data lokal ${currentStudent} telah dibersihkan.`);
+            renderJournal();
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            if (toast && toastMsg) {
+                toastMsg.innerText = msg;
+                toast.classList.remove('translate-y-20', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+                setTimeout(() => {
+                    toast.classList.remove('translate-y-0', 'opacity-100');
+                    toast.classList.add('translate-y-20', 'opacity-0');
+                }, 3000);
+            }
+        }
+
+        function loadStudentData(studentId) {
+            currentStudent = studentId;
+            const badgeDisp = document.getElementById('badgeStudentDisplay');
+            if (badgeDisp) {
+                badgeDisp.innerText = `Pemilik: Siswa ${studentId} • SMP Negeri 1 Kotaanyar`;
+            }
+            renderJournal();
+            if (activeSessionKey === 6) {
+                initChart();
+            }
+        }
+
+        // HELPER FUNCTIONS FOR GEMINI TTS & AUDIO PLAYBACK ACROSS ALL DEVICES (HP & DESKTOP)
+        function base64ToArrayBuffer(base64) {
+            const binaryString = window.atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        function pcmToWav(pcm16Array, sampleRate = 24000) {
+            const numChannels = 1;
+            const bitsPerSample = 16;
+            const byteRate = (sampleRate * numChannels * bitsPerSample) / 8;
+            const blockAlign = (numChannels * bitsPerSample) / 8;
+            const dataSize = pcm16Array.length * 2;
+            const buffer = new ArrayBuffer(44 + dataSize);
+            const view = new DataView(buffer);
+
+            const writeString = (v, offset, str) => {
+                for (let i = 0; i < str.length; i++) {
+                    v.setUint8(offset + i, str.charCodeAt(i));
+                }
+            };
+
+            writeString(view, 0, 'RIFF');
+            view.setUint32(4, 36 + dataSize, true);
+            writeString(view, 8, 'WAVE');
+            writeString(view, 12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true);
+            view.setUint16(22, numChannels, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, byteRate, true);
+            view.setUint16(32, blockAlign, true);
+            view.setUint16(34, bitsPerSample, true);
+            writeString(view, 36, 'data');
+            view.setUint32(40, dataSize, true);
+
+            let offset = 44;
+            for (let i = 0; i < pcm16Array.length; i++, offset += 2) {
+                view.setInt16(offset, pcm16Array[i], true);
+            }
+
+            return new Blob([buffer], { type: 'audio/wav' });
+        }
+
+        async function playGeminiTTS(text) {
+            try {
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+                const payload = {
+                    contents: [{
+                        parts: [{ text: `Bicaralah dalam bahasa Indonesia dengan ramah, hangat, dan menenangkan untuk anak SMP: ${text}` }]
+                    }],
+                    generationConfig: {
+                        responseModalities: ["AUDIO"],
+                        speechConfig: {
+                            voiceConfig: {
+                                prebuiltVoiceConfig: { voiceName: "Sulafat" }
+                            }
+                        }
+                    }
+                };
+
+                const res = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!res.ok) return false;
+
+                const data = await res.json();
+                const part = data?.candidates?.[0]?.content?.parts?.[0];
+                const audioData = part?.inlineData?.data;
+                const mimeType = part?.inlineData?.mimeType || "";
+
+                if (audioData) {
+                    let sampleRate = 24000;
+                    const rateMatch = mimeType.match(/rate=(\d+)/);
+                    if (rateMatch) {
+                        sampleRate = parseInt(rateMatch[1], 10);
+                    }
+                    const arrayBuffer = base64ToArrayBuffer(audioData);
+                    const pcm16 = new Int16Array(arrayBuffer);
+                    const wavBlob = pcmToWav(pcm16, sampleRate);
+                    const audioUrl = URL.createObjectURL(wavBlob);
+                    
+                    if (currentAudioObj) {
+                        currentAudioObj.pause();
+                    }
+                    currentAudioObj = new Audio(audioUrl);
+                    currentAudioObj.playbackRate = audioSpeed;
+                    await currentAudioObj.play();
+                    return true;
+                }
+            } catch(e) {
+                console.warn("Gemini TTS fallback to browser TTS:", e);
+            }
+            return false;
+        }
+
+        function speakWebSpeech(text) {
+            if (!('speechSynthesis' in window)) {
+                showToast("Fitur audio tidak didukung di browser ini.");
+                return;
+            }
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'id-ID';
+            utterance.rate = audioSpeed;
+
+            const voices = window.speechSynthesis.getVoices();
+            const idVoice = voices.find(v => v.lang && (v.lang.includes('id') || v.lang.includes('ID')));
+            if (idVoice) {
+                utterance.voice = idVoice;
+            }
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // MAIN AUDIO SPEAK FUNCTION (CROSS-DEVICE GUARANTEED)
+        async function speakText(text) {
+            if (!text || text.trim() === '') return;
+
+            if (currentAudioObj) {
+                currentAudioObj.pause();
+                currentAudioObj = null;
+            }
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+
+            showToast("🔊 Memutar suara...");
+
+            // Primary: Gemini TTS for identical quality on HP & Laptop
+            const success = await playGeminiTTS(text);
+            if (!success) {
+                // Fallback: Enhanced WebSpeech API
+                speakWebSpeech(text);
+            }
+        }
+
+        function speakInputText(inputId) {
+            const el = document.getElementById(inputId);
+            if (el && el.value.trim() !== '') {
+                speakText(el.value);
+            } else {
+                showToast("Kolom teks masih kosong.");
+            }
+        }
+
+        function startVoiceInput(inputId) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                showToast("Fitur rekaman suara tidak didukung browser ini. Silakan ketik secara manual.");
+                return;
+            }
+            
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'id-ID';
+            recognition.interimResults = false;
+            
+            showToast("🎙️ Mendengarkan... Silakan bicara sekarang!");
+            
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                const target = document.getElementById(inputId);
+                if (target) {
+                    target.value = transcript;
+                    showToast("Suara berhasil diubah ke teks!");
+                    speakText(`Tercatat: ${transcript}`);
+                }
+            };
+            
+            recognition.onerror = () => {
+                showToast("Gagal merekam suara. Silakan coba lagi.");
+            };
+            
+            recognition.start();
+        }
+
+        // DRAG AND DROP CARD GAME LOGIC
+        function renderDragGame() {
+            const pool = document.getElementById('dragCardPool');
+            if (!pool) return;
+
+            const placedCardIds = Object.values(placedCards).filter(Boolean).map(c => c.id);
+            const availableCards = dragCardsOriginal.filter(c => !placedCardIds.includes(c.id));
+
+            if (availableCards.length === 0) {
+                pool.innerHTML = `
+                    <div class="col-span-full p-3 bg-emerald-50 text-emerald-800 rounded-2xl text-center text-xs font-bold border border-emerald-200">
+                        ✨ Semua 4 kartu telah dipasang ke kategori!
+                    </div>
+                `;
+            } else {
+                pool.innerHTML = availableCards.map(c => {
+                    const isSelected = selectedCardId === c.id;
+                    return `
+                        <div id="${c.id}" 
+                             draggable="true" 
+                             ondragstart="handleDragStart(event, '${c.id}')"
+                             onclick="selectCardForTap('${c.id}')"
+                             class="p-3 bg-slate-100 hover:bg-indigo-50 border-2 ${isSelected ? 'border-indigo-600 bg-indigo-50 shadow-md scale-102' : 'border-slate-200'} rounded-2xl cursor-grab active:cursor-grabbing transition flex items-center justify-between text-xs font-bold text-slate-800 select-none">
+                            <span>${c.text}</span>
+                            <button onclick="event.stopPropagation(); speakText('${c.text}')" class="text-indigo-600 hover:text-indigo-800 p-1" title="Dengarkan Suara">
+                                <i class="fa-solid fa-volume-high"></i>
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            const categories = ['situasi', 'pikiran', 'perasaan', 'perilaku'];
+            categories.forEach(cat => {
+                const zone = document.getElementById(`zone-${cat}`);
+                if (!zone) return;
+                const card = placedCards[cat];
+                const contentDiv = zone.querySelector('.zone-content');
+                if (!contentDiv) return;
+
+                if (card) {
+                    const isCorrect = card.category === cat;
+                    contentDiv.innerHTML = `
+                        <div class="w-full p-2.5 ${isCorrect ? 'bg-emerald-100/90 border-emerald-400 text-emerald-950' : 'bg-rose-100/90 border-rose-400 text-rose-950'} border-2 rounded-xl text-xs font-bold flex items-center justify-between shadow-sm">
+                            <span>${card.text}</span>
+                            <div class="flex items-center gap-1">
+                                <button onclick="event.stopPropagation(); removePlacedCard('${cat}')" class="text-slate-500 hover:text-rose-700 p-1" title="Lepas Kartu">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    const titles = {
+                        situasi: 'Situasi',
+                        pikiran: 'Pikiran',
+                        perasaan: 'Perasaan',
+                        perilaku: 'Perilaku'
+                    };
+                    const colors = {
+                        situasi: 'text-sky-400',
+                        pikiran: 'text-purple-400',
+                        perasaan: 'text-rose-400',
+                        perilaku: 'text-emerald-400'
+                    };
+                    contentDiv.innerHTML = `<span class="text-xs ${colors[cat]} font-bold italic text-center drop-placeholder">Tarik / Tempel Kartu ${titles[cat]} Ke Sini</span>`;
+                }
+            });
+
+            updateDragGameScore();
+        }
+
+        function handleDragStart(event, id) {
+            draggedCardId = id;
+            event.dataTransfer.setData("text/plain", id);
+        }
+
+        function allowDrop(event) {
+            event.preventDefault();
+        }
+
+        function handleDragLeave(event) {
+            event.preventDefault();
+        }
+
+        function handleDrop(event, category) {
+            event.preventDefault();
+            const id = event.dataTransfer.getData("text/plain") || draggedCardId;
+            if (id) {
+                placeCardToCategory(id, category);
+                draggedCardId = null;
+            }
+        }
+
+        function selectCardForTap(id) {
+            if (selectedCardId === id) {
+                selectedCardId = null;
+            } else {
+                selectedCardId = id;
+                const card = dragCardsOriginal.find(c => c.id === id);
+                if (card) {
+                    speakText(`Kartu dipilih: ${card.text}. Sekarang sentuh salah satu kotak kategori.`);
+                    showToast(`Kartu terpilih! Sentuh kotak kategori target.`);
+                }
+            }
+            renderDragGame();
+        }
+
+        function handleZoneClick(category) {
+            if (selectedCardId) {
+                placeCardToCategory(selectedCardId, category);
+                selectedCardId = null;
+            }
+        }
+
+        function placeCardToCategory(cardId, targetCategory) {
+            const card = dragCardsOriginal.find(c => c.id === cardId);
+            if (!card) return;
+
+            placedCards[targetCategory] = card;
+            
+            if (card.category === targetCategory) {
+                speakText(`Tepat sekali! ${card.text} adalah ${targetCategory}.`);
+                showToast(`🎉 Benar! Kartu cocok di kategori ${targetCategory.toUpperCase()}`);
+            } else {
+                speakText(`Hampir tepat! ${card.hint}`);
+                showToast(`💡 Petunjuk: ${card.hint}`);
+            }
+
+            renderDragGame();
+        }
+
+        function removePlacedCard(category) {
+            placedCards[category] = null;
+            renderDragGame();
+        }
+
+        function resetDragGame() {
+            placedCards = { situasi: null, pikiran: null, perasaan: null, perilaku: null };
+            selectedCardId = null;
+            draggedCardId = null;
+            renderDragGame();
+            showToast("Permainan acak disetel ulang.");
+        }
+
+        function updateDragGameScore() {
+            let correctCount = 0;
+            Object.keys(placedCards).forEach(cat => {
+                if (placedCards[cat] && placedCards[cat].category === cat) {
+                    correctCount++;
+                }
+            });
+
+            const scoreEl = document.getElementById('dragScore');
+            const badgeEl = document.getElementById('dragBadge');
+
+            if (scoreEl) scoreEl.innerText = `${correctCount} / 4`;
+            
+            if (badgeEl) {
+                if (correctCount === 4) {
+                    badgeEl.classList.remove('hidden');
+                } else {
+                    badgeEl.classList.add('hidden');
+                }
+            }
+        }
+
+        // INITIALIZATION ON WINDOW LOAD
+        window.onload = function() {
+            renderDragGame();
+            switchSession('welcome');
+        };
+    </script>
+</body>
+</html>
